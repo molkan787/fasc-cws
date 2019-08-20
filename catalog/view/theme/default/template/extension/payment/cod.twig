@@ -1,0 +1,85 @@
+<div class="buttons">
+  <div class="pull-right">
+    <input type="button" value="{{ razor ? 'Pay' : button_confirm }}" id="button-confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+</div>
+<script type="text/javascript">
+{% if razor %}
+function _handle_payment(response){
+	_validate_payment(response.razorpay_payment_id);
+}
+var order_id = '{{ order_id }}';
+var options = {
+    "key": "{{ razor_key }}",
+    "amount": "{{ total }}", // 2000 paise = INR 20
+    "name": "{{ merchant }}",
+    "description": "Order #{{ order_id }}",
+    "image": "/image/catalog/Logos/8ce50d6cd0e400ca8845f43f7aca543f.jpg",
+    "handler": _handle_payment,
+    "prefill": {
+				"contact": "{{ phone }}",
+        "name": "{{ name }}",
+        "email": "{{ email }}"
+    },
+    "theme": {
+        "color": "#F36F24"
+    }
+};
+var rzp1 = new Razorpay(options);
+{% endif %}
+
+$('#button-confirm').on('click', function() {
+	var isRazor = document.getElementById('pm_razor').checked;
+	if(isRazor){
+		rzp1.open();
+	}else{
+		_confirm_order();
+	}
+});
+
+function _validate_payment(pay_id){
+$.ajax({
+	url: 'index.php?api_token=key&route=api/cspv/razor',
+	data: {
+		payment_id: pay_id,
+		order_id: order_id
+	},
+	dataType: 'json',
+	beforeSend: function() {
+		$('#button-confirm').button('loading');
+	},
+	complete: function() {
+		$('#button-confirm').button('reset');
+	},
+	success: function(json) {
+		if (json['data']) {
+			location = json['data'];	
+		}
+	},
+	error: function(xhr, ajaxOptions, thrownError) {
+		alert('An error occured during the validation of your payment.');
+	}
+});
+}
+
+function _confirm_order(){
+	$.ajax({
+		url: 'index.php?route=extension/payment/cod/confirm',
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-confirm').button('loading');
+		},
+		complete: function() {
+			$('#button-confirm').button('reset');
+		},
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];	
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+</script>

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAYQ,AAAA,IAAI,CAAC;EACD,OAAO,EAAgB,CAAC,CAAC,EAAE;CAC9B",
+    "sources": [
+        "content_with_function.scss"
+    ],
+    "names": [],
+    "file": "content_with_function.css"
+}

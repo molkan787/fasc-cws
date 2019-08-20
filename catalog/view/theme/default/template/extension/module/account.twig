@@ -1,0 +1,27 @@
+<div class="list-group">
+    {% if not logged %}
+        <a onclick="showPopup('login');" style="cursor: pointer;" class="list-group-item">
+            <i class="tiny material-icons mtm_c users">account_box</i>{{ text_login }}</a>
+        <a onclick="showPopup('reg');" style="cursor: pointer;"  class="list-group-item">
+            <i class="tiny material-icons mtm_c users">account_box</i>{{ text_register }}</a>
+    {% endif %}
+    <a href="{{ account }}" class="list-group-item">
+        <i class="tiny material-icons mtm_c users">account_box</i>{{ text_account }}
+    </a>
+    {% if logged %}
+        <a href="{{ edit }}" class="list-group-item">
+            <i class="tiny material-icons mtm_c setting">edit</i>{{ text_edit }}</a>
+    {% endif %}
+    <a href="{{ address }}" class="list-group-item">
+        <i class="tiny material-icons mtm_c map marker">location_on</i>{{ text_address }}</a>
+    <a href="{{ wishlist }}" class="list-group-item">
+        <i class="tiny material-icons mtm_c building">favorite</i>{{ text_wishlist }}</a>
+    <a href="{{ order }}" class="list-group-item">
+        <i class="tiny material-icons mtm_c chart line">history</i>{{ text_order }}</a>
+    <a href="{{ newsletter }}" class="list-group-item">
+        <i class="tiny material-icons mtm_c newspaper">mail</i>{{ text_newsletter }}</a>
+    {% if logged %}
+        <a href="{{ logout }}" class="list-group-item">
+            <i class="tiny material-icons">exit_to_app</i>{{ text_logout }}</a>
+    {% endif %}
+</div>

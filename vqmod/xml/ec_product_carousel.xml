@@ -1,0 +1,23 @@
+<modification>
+	<id>VQMod Ecomteck - Product Carousel - Custom Viewed Product</id>
+	<version>1.0.0</version>
+	<vqmver>2.3.0</vqmver>
+	<author>ecomteck@gmail.com (http://ecomteck.com)</author>
+	<file name="catalog/controller/product/product.php">
+		<operation error="abort">
+			<search position="after" offset="1"><![CDATA[if ($product_info) {]]></search>
+			<add><![CDATA[
+				if( $this->customer->isLogged() ){
+					$query = $this->db->query("SELECT COUNT(*) as total FROM " . DB_PREFIX . "extension WHERE `type` = 'module' && `code` = 'ecproductcarousel'");
+					
+					if($query->num_rows > 0 && $query->row['total'] > 0){
+						$this->load->model('ecproductcarousel/product');
+						$this->model_ecproductcarousel_product->updateViewed( $product_id );
+					}
+				}
+				]]>
+			</add>
+		</operation>
+	</file>
+	
+</modification>

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,SAAS,CAAC;EACN,WAAW,EAAE,IAAI;EACjB,SAAS,EAAE,IAAI;EACf,WAAW,EAAE,GAAG;EAChB,MAAM,EAAE,OAAO;EACf,KAAK,EAAE,uBAAuB;CASjC;;AAdD,AAOI,SAPK,CAOL,CAAC,CAAC;EACA,KAAK,EAAE,uBAAuB;CAC/B;;AATL,AAWI,SAXK,CAWL,gBAAgB,CAAC;EACf,KAAK,EAAE,OAAO;CACf",
+    "sources": [
+        "headerold.scss"
+    ],
+    "names": [],
+    "file": "headerold.css"
+}

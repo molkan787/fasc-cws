@@ -1,0 +1,43 @@
+{{ header }}
+<div id="common-success" class="container">
+    <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+            <li>
+                <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="row">{{ column_left }}
+        {% if column_left and column_right %}
+            {% set class = 'col-sm-6' %}
+        {% elseif column_left or column_right %}
+            {% set class = 'col-sm-9' %}
+        {% else %}
+            {% set class = 'col-sm-12' %}
+        {% endif %}
+
+        <div id="content" class="{{ class }}">{{ content_top }}
+            <h1>{{ heading_title }}</h1>
+            <h4>{{ text_message|format(phone) }}</h4>
+            <form action="{{ action }}" method="post" enctype="multipart/form-data">
+                <div class="form-group form-verify">
+                    <h3>{{ text_verification_code }}</h3>
+            {% if error_warning %}
+                <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+            {% endif %}
+                    <input type="text" name="otp" value="" placeholder="XXXXXX" autofocus  id="input-otp" maxlength="6" class="form-control"/>
+                    <input type="submit" value="{{ text_verify }}" class="btn btn-primary"/>
+                </div>
+                {% if redirect %}
+                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
+                {% endif %}
+            </form>
+
+            {{ content_bottom }}
+        </div>
+
+        {{ column_right }}
+    </div>
+</div>
+
+{{ footer }}

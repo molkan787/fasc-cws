@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,QAAQ,CAAC,CAAC,AAMV,OAAO,CANY,IAAI,EAYvB,CAAC,CAZQ,CAAC,AAMV,OAAO,CANY,IAAI,EAAvB,QAAQ,CAAC,CAAC,AAMD,MAAM,CANI,IAAI,EAYvB,CAAC,CAZQ,CAAC,AAMD,MAAM,CANI,IAAI,CAAC;EACpB,KAAK,EAAE,IAAI;EACX,WAAW,EAAE,IAAI;EACjB,SAAS,EAAE,GAAG;CACjB;;AAQD,AAAA,CAAC,CAAC;EAEE,OAAO,EAAE,GAAG;CACf",
+    "sources": [
+        "placeholder_selector.scss"
+    ],
+    "names": [],
+    "file": "placeholder_selector.css"
+}

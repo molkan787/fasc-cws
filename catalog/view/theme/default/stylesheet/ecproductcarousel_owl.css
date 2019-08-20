@@ -1,0 +1,194 @@
+/*Carousel*/
+.list_carousel.responsive {
+    width: auto;
+    margin-left: 0;
+}
+.clearfix {
+    float: none;
+    clear: both;
+}
+
+.ecproductcarousel .product-block{
+    min-height: 1px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-right: 0px;
+    position: relative;
+}
+
+.ecproductcarousel .product-label-special {
+  background: #c83a3a;
+  font-size: 12px;
+  width: 41px;
+  height: 41px;
+  top: 10px;
+  left: 10px;
+  display: block;
+  position: absolute;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  line-height: 3.4285714296;
+  padding: 0;
+  font-weight: normal;
+  text-align: center;
+  color:#FFFFFF;
+  z-index: 2;
+}
+.ecproductcarousel.product-label-special:before {
+  border-bottom: 7px solid #c83a3a;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  width: 7px;
+  height: 7px;
+  bottom: 2px;
+  left: 0px;
+  content: "";
+  display: inline-block;
+  position: absolute;
+  z-index: 1;
+}
+.product-label-discount {
+    background: url("../image/ecproductcarousel/discount.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #FFFFFF;
+    font-size: 24px;
+    font-weight: bold;
+    height: 67px;
+    right:5px;
+    padding-top: 15px;
+    position: absolute;
+    text-align: center;
+    width: 65px;
+    z-index: 2;
+}
+
+.product-label-discount span {
+    font-size: 18px;
+}
+
+/* CSS3 EFFECTS */
+
+/* SECOND EFFECTS */
+.ecproductcarousel .product-inner {
+    cursor: default;
+    float: left;
+    /*overflow: hidden;*/
+    position: relative;
+    text-align: center;
+}
+.ecproductcarousel .product-inner .image {
+    display: block;
+    position: relative;
+}
+.ecproductcarousel .image .mask a.quickview {
+  background-color:#44c767;
+  -moz-border-radius:28px;
+  -webkit-border-radius:28px;
+  border-radius:28px;
+  border:1px solid #18ab29;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:arial;
+  font-size:13px;
+  padding:6px 11px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #2f6627;
+}
+.ecproductcarousel .image .mask a.quickview:hover {
+  background-color:#5cbf2a;
+}
+.ecproductcarousel .image .mask {
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+}
+.ecproductcarousel .image .mask {
+   opacity: 0;
+   overflow:visible;
+   height: 100%;
+   width: 100%;
+   border:0px solid rgba(0,0,0,0.7);
+   -moz-box-sizing:border-box;
+   -webkit-box-sizing:border-box;
+   box-sizing:border-box;
+   -webkit-transition: all 0.4s ease-in-out;
+   -moz-transition: all 0.4s ease-in-out;
+   -o-transition: all 0.4s ease-in-out;
+   -ms-transition: all 0.4s ease-in-out;
+   transition: all 0.4s ease-in-out;
+}
+.ecproductcarousel .image a.quickview {
+  position:relative;
+  top:45%;
+  opacity:0;
+   -moz-transform:scale(0,0);
+   -webkit-transform:scale(0,0);
+   -o-transform:scale(0,0);
+   -ms-transform:scale(0,0);
+   transform:scale(0,0);
+   -webkit-transition: -webkit-transform 0.2s 0.1s ease-in, opacity 0.1s ease-in-out;
+   -moz-transition: -moz-transform 0.2s 0.1s ease-in, opacity 0.1s ease-in-out;
+   -o-transition: -o-transform 0.2s 0.1s ease-in, opacity 0.1s ease-in-out;
+   -ms-transition: -ms-transform 0.2s 0.1s ease-in, opacity 0.1s ease-in-out;
+   transition: transform 0.2s 0.1s ease-in, opacity 0.1s ease-in-out;
+}
+.ecproductcarousel .image:hover .mask {
+   opacity: 1;
+   z-index: 2;
+}
+.ecproductcarousel .image:hover a.quickview {
+  opacity: 1;
+  z-index: 3
+  -moz-transform:scale(1,1);
+  -webkit-transform:scale(1,1);
+  -o-transform:scale(1,1);
+  -ms-transform:scale(1,1);
+  transform:scale(1,1);
+  -moz-transition-delay:0.3s;
+  -webkit-transition-delay:0.3s;
+  -o-transition-delay:0.3s;
+  -ms-transition-delay:0.3s;
+  transition-delay:0.3s;
+}
+
+.ecproductcarousel .product-label-bought {
+    opacity: 0;
+    background: none repeat scroll 0 0 #FFFFFF;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 5px;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+.ecproductcarousel .product-label-bought span{
+    color: #999999;
+    display: block;
+    font-size: 12px;
+    height: 27px;
+
+}
+.ecproductcarousel .image:hover .product-label-bought {
+  opacity:1;
+  z-index: 2;
+  -moz-transform:scale(1,1);
+  -webkit-transform:scale(1,1);
+  -o-transform:scale(1,1);
+  -ms-transform:scale(1,1);
+  transform:scale(1,1);
+  -moz-transition-delay:0.3s;
+  -webkit-transition-delay:0.3s;
+  -o-transition-delay:0.3s;
+  -ms-transition-delay:0.3s;
+  transition-delay:0.3s;
+}
+
+.ecproductcarousel .box-content{ overflow: hidden;}
+
+/*OWL Carousel*/
+

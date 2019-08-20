@@ -1,0 +1,24 @@
+.div {
+  one: null;
+  one: null world;
+  one: NULL world;
+  one: a null, b;
+  two: a, b;
+}
+
+p:before {
+  content: "I ate  pies!";
+}
+
+.foo {
+  border-radius: 10;
+}
+
+.fu {
+  border-radius: 20;
+}
+
+.bar {
+  border-top-left-radius: 30;
+}
+/*# sourceMappingURL=null.css.map */

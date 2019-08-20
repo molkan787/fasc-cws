@@ -1,0 +1,16 @@
+<style>
+.promo_item{
+    margin: 4px;
+    border-radius: 12px !important;
+    box-shadow: 1px 1px 10px #eee;
+    cursor: pointer;
+    transition: transform 0.4s;
+    max-width: 100%;
+}
+.promo_item:hover {
+    transform: scale(1.02);
+}
+</style>
+{% for item in items %}
+<img class="promo_item" src="{{ item.image }}" />
+{% endfor %}
