@@ -39,9 +39,10 @@ class ControllerApiClient extends Controller
 			'filter_date_added' => $this->getInput('reg_date')
 		);
 
+		$totals = $this->model_admin_customer->getTotalCounts();
 		$customers = $this->model_admin_customer->getCustomers($filters);
 
-		$this->respond_json(array('total' => 10, 'items' => $customers));
+		$this->respond_json(array('totals' => $totals, 'items' => $customers));
 
 	}
 }

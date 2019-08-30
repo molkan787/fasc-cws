@@ -79,8 +79,49 @@ class ModelAdminCustomer extends Model {
 		return $query->row;
 	}
 
+	public function getOrCreateCustomer($phone, $fullname){
+		if(strlen($phone) < 9) return null;
+		$customer = $this->getCustomerByPhone($phone);
+		if($customer) return $customer;
+
+		$names = explode(' ', trim($fullname), 2);
+		$data = array(
+			'firstname' => $names[0],
+			'lastname' => count($names) > 1 ? $names[1] : '',
+			'telephone' => $phone,
+			'email' => '',
+			'customer_group_id' => 1,
+			'custom_field' => array(),
+			'newsletter' => 0,
+			'salt' => 'xxx',
+			'password' => 'xxx',
+			'status' => 1,
+			'safe' => 0,
+		);
+
+		$store_id = $this->config->get('config_store_id');
+		
+		$id = $this->addCustomer($data);
+		
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET verified = 1, store_id = " . $store_id . " WHERE customer_id = " . $id);
+
+		$data['customer_id'] = $id;
+		$data['address_1'] = '';
+		$data['address_2'] = '';
+		$data['city'] = '';
+
+		return $data;
+
+	}
+
 	public function getCustomerByEmail($email) {
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer WHERE LCASE(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
+
+		return $query->row;
+	}
+	
+	public function getCustomerByPhone($phone) {
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer WHERE verified = 1 AND telephone = '" . $this->db->escape($phone) . "'");
 
 		return $query->row;
 	}
@@ -221,6 +262,21 @@ class ModelAdminCustomer extends Model {
 		}
 
 		return $address_data;
+	}
+
+	public function getTotalCounts(){
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer";
+		$data = array();
+
+		$query = $this->db->query($sql . " WHERE verified = 1");
+		$data['verified'] = (int)$query->row['total'];
+
+		$query = $this->db->query($sql . " WHERE verified = 0");
+		$data['not_verified'] = (int)$query->row['total'];
+
+		$data['total'] = $data['verified'] + $data['not_verified'];
+
+		return $data;
 	}
 
 	public function getTotalCustomers($data = array()) {

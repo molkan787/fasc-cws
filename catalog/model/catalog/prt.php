@@ -31,7 +31,7 @@ class ModelCatalogPrt extends Model {
 	public function getProductsPos($store_id) {
         $this->load->model('tool/image');
 
-		$sql = "SELECT p.product_id, p.barcode, p.quantity, p.price, p.discount_type, p.discount_amt, p.image, p.gst, pd.name  FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT p.product_id, p.cat, p.barcode, p.quantity, p.price, p.discount_type, p.discount_amt, p.image, p.gst, p.hsn, pd.name  FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		$sql .= " AND p.store_id = '" . (int)$store_id. "'";
 		$sql .= " AND p.status = '1'";
@@ -57,7 +57,9 @@ class ModelCatalogPrt extends Model {
 				'barcode' => $prt['barcode'],
 				'price' => $price,
 				'name' => $prt['name'],
+				'cat' => $prt['cat'],
 				'tax' => intval($prt['gst']),
+				'hsn' => $prt['hsn'],
 				'image' => url($this->model_tool_image->resize($prt['image'], 50, 50))
 			));
 		}
@@ -184,9 +186,13 @@ class ModelCatalogPrt extends Model {
 		$cast2Int = function ($item){
 			return (int)$item;
 		};
-		$ids = implode(',', array_map($cast2Int, $ids));
+		$ids = count($ids) ? implode(',', array_map($cast2Int, $ids)) : false;
 
-		$sql = "SELECT product_id, quantity, price FROM " . DB_PREFIX . "product p WHERE date_modified >= FROM_UNIXTIME(".(int)$time.") AND product_id IN (".$ids.")";
+		$sql = "SELECT product_id, quantity, price, discount_amt, discount_type FROM " . DB_PREFIX . "product p WHERE date_modified >= FROM_UNIXTIME(".(int)$time.")";
+
+		if($ids){
+			$sql .= " AND product_id IN (".$ids.")";
+		}
 
 		$query = $this->db->query($sql);
 		return $query->rows;

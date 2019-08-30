@@ -12,5 +12,11 @@
 }
 </style>
 {% for item in items %}
-<img class="promo_item" src="{{ item.image }}" />
+    {% if item.link %}
+        <a href="{{ item.link }}">
+            <img class="promo_item" src="{{ item.image }}" />
+        </a>
+    {% else %}
+        <img class="promo_item" src="{{ item.image }}" />
+    {% endif %}
 {% endfor %}

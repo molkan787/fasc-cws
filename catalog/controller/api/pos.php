@@ -24,10 +24,19 @@ class ControllerApiPos extends Controller{
 		$this->load->model('checkout/order');
 		$this->load->model('admin/order');
 		$this->load->model('admin/product');
+		$this->load->model('admin/customer');
 
 		$store_id = $this->config->get('config_store_id');
 		$prts = $this->getInput('products');
+		$customerName = $this->getInput('customerName');
+		$customerPhone = $this->getInput('customerPhone');
 		$other_val = floatval($this->getInput('other_val'));
+
+		$customer = null;
+		if(strlen($customerPhone) == 10){
+			$customer = $this->model_admin_customer->getOrCreateCustomer($customerPhone, $customerName);
+		}
+
 		if(empty($prts)){
 			$this->respond_fail('argument_mssing');
 			return;
@@ -46,14 +55,17 @@ class ControllerApiPos extends Controller{
 			$products[] = $this->getProductArray(0, 'Other', 1, $other_val);
 		}
 
-		$data = $this->getOrderArray($store_id, $products, $total);
+		$data = $this->getOrderArray($store_id, $products, $total, $customer);
 
 		$order_id = $this->model_checkout_order->addOrder($data);
 		$this->model_checkout_order->addOrderHistory($order_id, 5);
 
 		$this->model_admin_order->markAsPaid($order_id);
 
-		$this->respond_json(array('order_id' => $order_id));
+		$this->respond_json(array(
+			'order_id' => $order_id,
+			'customer' => $customer['firstname'] . ' ' . $customer['lastname'],
+		));
 
 	}
 
@@ -152,7 +164,6 @@ class ControllerApiPos extends Controller{
 		$this->respond_json($response);
 
 	}
-
 
 	private function getOrderArray($store_id, $products, $total, $customer = null, $pay_method = 'cod'){
 		$payment_name = $pay_method == 'cod' ? 'Cash On Delivery' : 'Credit Card/NetBanking';

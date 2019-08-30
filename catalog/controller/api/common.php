@@ -18,9 +18,23 @@ class ControllerApiCommon extends Controller
 		$data = array();
 		$data['categories'] = $this->getCats();
 		$data['user'] = $user;
+		$data['contact_info'] = $this->getContactInfo();
 
 
 		$this->respond_json($data);
+	}
+
+	private function getContactInfo(){
+		$this->load->model('admin/setting');
+		$store_id = $this->config->get('config_store_id');
+		$store_setting =  $this->model_admin_setting->getSetting('config', $store_id);
+		return array(
+			'phone' => $this->config->get('config_telephone'),
+			'email' => $this->config->get('config_email'),
+			'name' => $store_setting['name'],
+			'address' => $this->config->get('config_address'),
+			'order_phone' => $this->config->get('config_order_phone')
+		);
 	}
 
 	private function getCats(){

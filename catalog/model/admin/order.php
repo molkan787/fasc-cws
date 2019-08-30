@@ -35,7 +35,7 @@ class ModelAdminOrder extends Model {
 	}
 
 	public function getOrder($order_id) {
-		$order_query = $this->db->query("SELECT *, DATE(o.date_added) AS date_added, (SELECT CONCAT(c.firstname, ' ', c.lastname) FROM " . DB_PREFIX . "customer c WHERE c.customer_id = o.customer_id) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status FROM `" . DB_PREFIX . "order` o WHERE o.order_id = '" . (int)$order_id . "'");
+		$order_query = $this->db->query("SELECT *, (SELECT CONCAT(c.firstname, ' ', c.lastname) FROM " . DB_PREFIX . "customer c WHERE c.customer_id = o.customer_id) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status FROM `" . DB_PREFIX . "order` o WHERE o.order_id = '" . (int)$order_id . "'");
 
 		if ($order_query->num_rows) {
 			$country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$order_query->row['payment_country_id'] . "'");
@@ -171,7 +171,7 @@ class ModelAdminOrder extends Model {
 	}
 
 	public function getOrders($data = array()) {
-		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status, o.shipping_code, o.total, DATE(o.date_added) AS date_added, o.date_modified, o.order_status_id FROM `" . DB_PREFIX . "order` o";
+		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status, o.shipping_code, o.total, o.date_added, o.date_modified, o.order_status_id, o.paid FROM `" . DB_PREFIX . "order` o";
 
 		if (!empty($data['filter_order_status'])) {
 			$implode = array();
@@ -265,7 +265,7 @@ class ModelAdminOrder extends Model {
 	public function getOrderProducts($order_id) {
 		$opt = DB_PREFIX . "order_product";
 		$pt = DB_PREFIX . "product";
-		$sql = "SELECT ".$opt.".*, ".$pt.".gst FROM ".$opt;
+		$sql = "SELECT ".$opt.".*, ".$pt.".gst, ".$pt.".hsn FROM ".$opt;
 		$sql .= " LEFT JOIN ".$pt." ON ".$opt.".product_id = ".$pt.".product_id";
 		$sql .= " WHERE ".$opt.".order_id = '".(int)$order_id."'";
 
@@ -363,12 +363,20 @@ class ModelAdminOrder extends Model {
 	}
 
 	public function getTotalOrdersByStoreId($store_id) {
+		$data = array();
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE store_id = '" . (int)$store_id . "'");
+		$data['total'] = $query->row['total'];
 
-		return $query->row['total'];
+		$query = $this->db->query("SELECT COUNT(*) AS completed FROM `" . DB_PREFIX . "order` WHERE order_status_id = 5 AND store_id = '" . (int)$store_id . "'");
+		$data['completed'] = $query->row['completed'];
+
+		$query = $this->db->query("SELECT COUNT(*) AS pending FROM `" . DB_PREFIX . "order` WHERE order_status_id = 1 AND store_id = '" . (int)$store_id . "'");
+		$data['pending'] = $query->row['pending'];
+
+		return $data;
 	}
 
-	public function getNewOrdersCountByStoreId($store_id, $lastCheck, $limited = false) {
+	public function getNewOrdersCountByStoreId($store_id, $lastCheck, $limited = false) { //
 		$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE store_id = '" . (int)$store_id . "' AND UNIX_TIMESTAMP(date_added) > '".(int)$lastCheck."'";
 		if($limited){
 			$sql .= " AND UNIX_TIMESTAMP(date_added) > '".(time() - 3600 * 24)."'";

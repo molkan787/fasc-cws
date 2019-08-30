@@ -58,7 +58,7 @@ class ControllerCheckoutShippingAddress extends Controller {
 		$store_id = $this->config->get('config_store_id');
 		$bsd = $this->model_admin_store->getStoreBSD($store_id);
 
-		$data['del_timing'] = 'From ' . $bsd['timing_from'] . ' to ' . $bsd['timing_to'];
+		$data['del_timing'] = 'Regular delivery (' . $bsd['timing_from'] . ' - ' . $bsd['timing_to'] . ')';
 		$data['start_date'] = date('Y-m-d', time());
 
 		//$order_total = $this->cart->getTotal();

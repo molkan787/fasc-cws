@@ -13,6 +13,7 @@ class ControllerCommonPromos extends Controller {
 			$i_h = 200;
 			$i_w = ($p_f == 1) ? 500 : ($p_f == 2 ? 230 : 150);
 			$item['image'] = $this->model_tool_image->resize($item['image'], $i_w, $i_h);
+			$item['link'] = trim($item['link']) ? 'index.php?route=product/list&ids='. $item['link'] : false;
 		}
         
         $data = array();

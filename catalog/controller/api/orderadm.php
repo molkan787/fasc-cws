@@ -101,7 +101,7 @@ class ControllerApiOrderadm extends Controller
 		$totalOrders = $this->model_admin_order->getTotalOrdersByStoreId($store_id);
 
 		$response = array(
-			'total' => $totalOrders,
+			'totals' => $totalOrders,
 			'items' => $orders
 		);
 
