@@ -55,6 +55,7 @@ class ModelCatalogPrt extends Model {
 				'id' => $prt['product_id'],
 				'quantity' => $prt['quantity'],
 				'barcode' => $prt['barcode'],
+				'real_price' => floatval($prt['price']),
 				'price' => $price,
 				'name' => $prt['name'],
 				'cat' => $prt['cat'],
@@ -65,6 +66,18 @@ class ModelCatalogPrt extends Model {
 		}
 
 		return $result;
+	}
+
+	public function getProductsNames($store_id) {
+
+		$sql = "SELECT p.product_id, pd.name  FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+		$sql .= " AND p.store_id = '" . (int)$store_id. "'";
+		$sql .= " GROUP BY p.product_id ORDER BY p.product_id DESC";
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
 	}
 
 	public function getProducts($data = array()) {

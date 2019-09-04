@@ -159,6 +159,7 @@ class ModelAdminOrder extends Model {
 				'accept_language'         => $order_query->row['accept_language'],
 				'date_added'              => $order_query->row['date_added'],
 				'date_modified'           => $order_query->row['date_modified'],
+				'saved_amount'           => $order_query->row['saved_amount'],
 				'del_date'           => $order_query->row['del_date'],
 				'del_timing'           => $order_query->row['del_timing'],
 				'fast_del'           => $order_query->row['fast_del'],
@@ -189,6 +190,13 @@ class ModelAdminOrder extends Model {
 			$sql .= " WHERE o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
 		} else {
 			$sql .= " WHERE o.order_status_id > '0'";
+		}
+
+		if(isset($data['filter_search']) && !empty($data['filter_search'])){
+			$search = strtolower($this->db->escape($data['filter_search']));
+			$sql .= " AND ( LOWER(CONCAT(o.firstname, ' ', o.lastname)) LIKE '%" . $search . "%' OR ";
+			$sql .= "email LIKE '%" . $search . "%' OR telephone LIKE '%" . $search . "%' OR ";
+			$sql .= "o.date_added LIKE '%" . $search . "%')";
 		}
 
 		if ($data['limited']) {

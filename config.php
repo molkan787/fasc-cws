@@ -3,8 +3,8 @@
 define('DEV', true);
 
 if(DEV){
-    define('HTTP_SERVER', 'http://169.254.80.80/');
-    define('HTTPS_SERVER', 'http://169.254.80.80/');
+    define('HTTP_SERVER', 'http://fasc.local/');
+    define('HTTPS_SERVER', 'http://fasc.local/');
 }else{
     define('HTTP_SERVER', 'http://www.walkonretail.com/');
     define('HTTPS_SERVER', 'https://www.walkonretail.com/');

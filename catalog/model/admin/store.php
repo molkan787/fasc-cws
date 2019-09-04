@@ -41,7 +41,7 @@ class ModelAdminStore extends Model {
 	}
 
 	public function getDefaultUrl(){
-		$query = $this->db->query("SELECT value FROM " . DB_PREFIX . "setting WHERE store_id = 1 AND `key` = 'config_url' LIMIT 1");
+		$query = $this->db->query("SELECT value FROM " . DB_PREFIX . "setting WHERE `key` = 'config_ssl' LIMIT 1");
 		if($query->num_rows){
 			return $query->row['value'];
 		}else{

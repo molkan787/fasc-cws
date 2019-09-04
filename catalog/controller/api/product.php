@@ -17,13 +17,16 @@ class ControllerApiProduct extends Controller
 
         $this->load->model('admin/product');
 
+        $user = $this->model_admin_users->loadCurrent();
+		$checkStoreId = (intval($user['user_type']) > 10);
+
         if($multiple){
             $pids = explode(',', $product_id);
             foreach ($pids as $pid) {
-                $this->model_admin_product->deleteProduct($pid, true);
+                $this->model_admin_product->deleteProduct($pid, $checkStoreId);
             }
         }else{
-            $this->model_admin_product->deleteProduct($product_id, true);
+            $this->model_admin_product->deleteProduct($product_id, $checkStoreId);
         }
 
         $this->respond_json('');
@@ -80,11 +83,25 @@ class ControllerApiProduct extends Controller
 
     }
 
+    public function listNames(){
+        
+        $this->load->model('catalog/prt');
+
+        $store_id = $this->config->get('config_store_id');
+
+        $products = $this->model_catalog_prt->getProductsNames( $store_id );
+
+        $this->respond_json(array(
+            'items' => $products
+        ));
+    }
+
     public function list()
     {
         $this->load->model('catalog/prt');
 
-        $cps = $this->getInput('ptype', '') != '';
+        $ptype = $this->getInput('ptype', '');
+        $cps = $ptype != '';
 
         $filters = array();
         $filters['store'] = $cps ? 0 : $this->config->get('config_store_id');
@@ -96,6 +113,9 @@ class ControllerApiProduct extends Controller
         $filters['name'] = $this->getInput('name', '');
         $filters['stock'] = $this->getInput('stock', '');
         $filters['discount'] = $this->getInput('discount', '');
+        if($ptype == 'cps'){
+            $filters['status'] = '1';
+        }
 
         $order_by = $this->getInput('order_by', '');
         $order = $this->getInput('order', '');
@@ -144,14 +164,23 @@ class ControllerApiProduct extends Controller
 
         $pid = $this->getInput('pid');
 
+        $store_id = intval($this->config->get('config_store_id'));
+
         if($pid == 'new'){
             $data = $this->getDataArray();
 
             $pid = $this->model_admin_product->addProduct($data);
 
-        } else if(!$this->model_admin_product->getProduct($pid)){
-            $this->respond_fail('not_found');
-            return;
+        } else {
+            $_p = $this->model_admin_product->getProduct($pid);
+            if(!$_p){
+                $this->respond_fail('not_found');
+                return;
+            }
+            if(intval($_p['store_id']) != $store_id){
+                $this->respond_fail('product_not_owned');
+                return;
+            }
         }
 
         

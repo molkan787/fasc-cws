@@ -3,6 +3,7 @@ class ControllerCommonHeader extends Controller {
 	public function index() {
 		// Analytics
 		$this->load->model('setting/extension');
+		$this->load->model('admin/setting');
 
 		$data['analytics'] = array();
 
@@ -22,6 +23,15 @@ class ControllerCommonHeader extends Controller {
 
 		if (is_file(DIR_IMAGE . $this->config->get('config_icon'))) {
 			$this->document->addLink($server . 'image/' . $this->config->get('config_icon'), 'icon');
+		}
+
+		$store_id = $this->config->get('config_store_id');
+		if((int)$store_id == 0){
+			$data['city'] = 'City';
+		}else{
+			$langId = $this->language->get('code') == 'in' ? '2' : '1';
+			$city_names = $this->model_admin_setting->getStoreCityNames($store_id);
+			$data['city'] = $city_names[$langId];
 		}
 
 		$data['title'] = $this->document->getTitle();

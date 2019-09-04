@@ -187,6 +187,12 @@ function setOptions(parent, options, incAll, textProp, valueProp) {
         { val(opt, incAll); parent.appendChild(opt); }
     }
 
+    options = options.sort((a, b) => {
+        if(a[p_t] < b[p_t]) { return -1; }
+        if(a[p_t] > b[p_t]) { return 1; }
+        return 0;
+    });
+
     for (var i = 0; i < options.length; i++) {
         var opt = crt_elt('option', parent);
         val(opt, options[i][p_t]);

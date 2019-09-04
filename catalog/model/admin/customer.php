@@ -127,7 +127,7 @@ class ModelAdminCustomer extends Model {
 	}
 	
 	public function getCustomers($data = array()) {
-		$sql = "SELECT customer_id, verified, telephone, email, CONCAT(c.firstname, ' ', c.lastname) AS name FROM " . DB_PREFIX . "customer c";
+		$sql = "SELECT customer_id, verified, telephone, email, date_added, CONCAT(c.firstname, ' ', c.lastname) AS name FROM " . DB_PREFIX . "customer c";
 		
 		$implode = array();
 

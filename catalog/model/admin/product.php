@@ -345,7 +345,23 @@ class ModelAdminProduct extends Model {
 				$data['store_id'] = $destStoreId;
 			} 
 
-			return $this->addProduct($data);
+			$pid = $this->addProduct($data);
+
+			$sql = "UPDATE " . DB_PREFIX . "product SET ";
+			$first = true;
+			foreach($query->row as $p => $v){
+				if($p == 'product_id' || $p == 'barcode' || $p == 'stock' || $p == 'store_id') continue;
+				if($first){
+					$first = false;
+				}else{
+					$sql .= ', ';
+				}
+				$sql .= "`" . $p . "` = '" . $this->db->escape($v) . "'";
+			}
+			$sql .= " WHERE product_id = " . $pid;
+			$this->db->query($sql);
+
+			return $pid;
 		}
 	}
 
@@ -642,6 +658,10 @@ class ModelAdminProduct extends Model {
 
 	public function setProductImages($product_id, $to_keep, $to_add){
 		$sql = "DELETE FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "'";
+		$to_keep = array_map(function ($item){
+			return (int)$item;
+		}, $to_keep);
+		$to_keep = implode(',', $to_keep);
 		if(!empty($to_keep)){
 			$sql .= " AND product_image_id NOT IN (" . $to_keep . ")";
 		}

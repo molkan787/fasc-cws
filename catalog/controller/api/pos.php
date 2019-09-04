@@ -45,8 +45,12 @@ class ControllerApiPos extends Controller{
 
 		$products = array();
 		$total = 0;
+		$saved = 0;
 		foreach ($prts as $p) {
-			$total += floatval($p['price']) * intval($p['q']);
+			$real_ltotal = floatval($p['real_price']) * intval($p['q']);
+			$ltotal = floatval($p['price']) * intval($p['q']);
+			$total += $ltotal;
+			$saved += $real_ltotal - $ltotal;
 			$products[] = $this->getProductArray($p['id'], $p['name'], $p['q'], $p['price']);
 		}
 
@@ -56,6 +60,7 @@ class ControllerApiPos extends Controller{
 		}
 
 		$data = $this->getOrderArray($store_id, $products, $total, $customer);
+		$data['saved_amount'] = $saved;
 
 		$order_id = $this->model_checkout_order->addOrder($data);
 		$this->model_checkout_order->addOrderHistory($order_id, 5);
@@ -65,6 +70,7 @@ class ControllerApiPos extends Controller{
 		$this->respond_json(array(
 			'order_id' => $order_id,
 			'customer' => $customer['firstname'] . ' ' . $customer['lastname'],
+			'saved' => $saved,
 		));
 
 	}
@@ -117,6 +123,7 @@ class ControllerApiPos extends Controller{
 		$products = array();
 		$ids = '';
 		$total = 0;
+		$saved = 0;
 		foreach ($prts as $pid => $q) {
 			if($ids != '') $ids .= ',';
 			$ids .= (int)$pid;
@@ -126,13 +133,17 @@ class ControllerApiPos extends Controller{
 
 		foreach ($p_list as $p) {
 			$id = $p['product_id'];
-			$price = (float)$p['price'];
+			$real_price = floatval($p['price']);
+			$price = $real_price;
 			$discount = (int)$p['discount_amt'];
 			if($discount > 0){
 				if($p['discount_type'] == '1') $price -= ($price * $discount  / 100);
 				else $price -= $discount;
 			}
-			$total += $price * intval($prts[$id]);
+			$ltotal = $price * intval($prts[$id]);
+			$real_ltotal = $real_ltotal * intval($prts[$id]);
+			$total += $ltotal;
+			$saved += $real_ltotal - $ltotal;
 			$products[] = $this->getProductArray($id, $p['name'], (int)$prts[$id], $price);
 		}
 
@@ -143,6 +154,7 @@ class ControllerApiPos extends Controller{
 
 
 		$data = $this->getOrderArray($store_id, $products, $total, $customer, $pay_method);
+		$data['saved_amount'] = $saved;
 
 		$order_id = $this->model_checkout_order->addOrder($data);
 		if($pay_method != 'razor'){

@@ -93,6 +93,7 @@ class ControllerApiOrderadm extends Controller
 			'limited' => $limited,
 
 			'customer_id' => $this->getInput('customer_id', ''),
+			'filter_search' => $this->getInput('search', ''),
 			'filter_order_status_id' => $this->getInput('status', ''),
 			'filter_date_added' => $this->getInput('order_date', '')
 		);
