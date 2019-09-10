@@ -15,6 +15,10 @@ class ModelAdminVendor extends Model {
             if($query->row){
                 $vendor['last_purchase'] = $query->row['purchase_date'];
             }
+            $query = $this->db->query("SELECT payment_date FROM fasc_payments WHERE vendor_id = " . $vendor_id . " ORDER BY payment_date DESC LIMIT 1");
+            if($query->row){
+                $vendor['last_payment'] = $query->row['payment_date'];
+            }
         }
 
         return $vendors;
@@ -76,6 +80,20 @@ class ModelAdminVendor extends Model {
         }else{
             return $id;
         }
+
+    }
+
+    public function deleteVendor($vendor_id, $check_store = 0){
+
+        $sql = "DELETE FROM fasc_vendor WHERE id = " . (int)$vendor_id;
+
+        if(intval($check_store) > 0){
+            $sql .= " AND store_id = " . intval($check_store);
+        }
+
+        $this->db->query($sql);
+
+        return true;
 
     }
 
@@ -149,6 +167,50 @@ class ModelAdminVendor extends Model {
 
         return $query->rows;
 
+    }
+
+    public function getPaymentById($payment_id){
+
+        $sql = "SELECT * FROM fasc_payments WHERE id = " . (int)$payment_id;
+
+        $query = $this->db->query($sql);
+
+        return $query->row;
+
+    }
+
+    public function getPurchaseById($purchase_id){
+
+        $sql = "SELECT * FROM fasc_purchase WHERE id = " . (int)$purchase_id;
+
+        $query = $this->db->query($sql);
+
+        return $query->row;
+
+    }
+
+    public function deletePayment($payment_id, $check_store = 0){
+        $sql = "DELETE FROM fasc_payments WHERE id = " . (int)$payment_id;
+
+        if(intval($check_store) > 0){
+            $sql .= " AND store_id = " . intval($check_store);
+        }
+
+        $this->db->query($sql);
+
+        return true;
+    }
+    
+    public function deletePurchase($purchase_id, $check_store = 0){
+        $sql = "DELETE FROM fasc_purchase WHERE id = " . (int)$purchase_id;
+
+        if(intval($check_store) > 0){
+            $sql .= " AND store_id = " . intval($check_store);
+        }
+
+        $this->db->query($sql);
+
+        return true;
     }
 
 }

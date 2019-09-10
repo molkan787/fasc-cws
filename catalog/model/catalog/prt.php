@@ -201,7 +201,7 @@ class ModelCatalogPrt extends Model {
 		};
 		$ids = count($ids) ? implode(',', array_map($cast2Int, $ids)) : false;
 
-		$sql = "SELECT product_id, quantity, price, discount_amt, discount_type FROM " . DB_PREFIX . "product p WHERE date_modified >= FROM_UNIXTIME(".(int)$time.")";
+		$sql = "SELECT p.product_id, p.quantity, p.price, p.discount_amt, p.discount_type, pd.name FROM " . DB_PREFIX . "product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) WHERE p.date_modified >= FROM_UNIXTIME(".(int)$time.") GROUP BY p.product_id";
 
 		if($ids){
 			$sql .= " AND product_id IN (".$ids.")";

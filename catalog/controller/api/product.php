@@ -163,11 +163,17 @@ class ControllerApiProduct extends Controller
         $this->load->model('admin/product');
 
         $pid = $this->getInput('pid');
+        $ptype = $this->getInput('ptype');
+        $cps = false;
+        if($ptype == 'cps_admin'){
+            $user = $this->model_admin_users->loadCurrent();
+		    $cps = (intval($user['user_type']) < 10);
+        }
 
-        $store_id = intval($this->config->get('config_store_id'));
+        $store_id = $cps ? 0 : intval($this->config->get('config_store_id'));
 
         if($pid == 'new'){
-            $data = $this->getDataArray();
+            $data = $this->getDataArray($store_id);
 
             $pid = $this->model_admin_product->addProduct($data);
 
@@ -190,7 +196,7 @@ class ControllerApiProduct extends Controller
         }
 
         $data = array();
-        // $data['store_id'] = $this->config->get('config_store_id');
+        $data['store_id'] = $store_id;
         $data['price'] = $this->getInput('price', '0');
         $data['quantity'] = $this->getInput('stock', '0');
         $data['barcode'] = $this->getInput('barcode');
@@ -309,7 +315,7 @@ class ControllerApiProduct extends Controller
     }
 
 
-    private function getDataArray()
+    private function getDataArray($store_id)
     {
         return array(
             'product_description' =>
@@ -333,6 +339,7 @@ class ControllerApiProduct extends Controller
                     'tag' => ''
                 )
             ),
+            'store_id' => $store_id,
             'model' => 'model',
             'sku' => '',
             'upc' => '',

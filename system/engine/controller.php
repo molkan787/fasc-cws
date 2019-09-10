@@ -37,6 +37,7 @@ abstract class Controller {
 
 	protected function respond_json($data){
         $response = new stdClass();
+        $response->updates = getUpdatesData();
         $response->status = 'OK';
         $response->lang = $this->config->get('config_language_id');
         $response->data = $data;

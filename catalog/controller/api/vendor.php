@@ -128,4 +128,64 @@ class ControllerApiVendor extends Controller{
 
     }
 
+    public function deleteVendor(){
+
+        $this->load->model('admin/vendor');
+
+        $store_id = $this->config->get('config_store_id');
+
+        $id = $this->getInput('id');
+
+        $this->model_admin_vendor->deleteVendor($id, $store_id);
+
+        $this->respond_json(array());
+
+    }
+    
+    public function deletePayment(){
+
+        $this->load->model('admin/vendor');
+
+        $store_id = intval( $this->config->get('config_store_id') );
+
+        $id = $this->getInput('id');
+
+        $payment = $this->model_admin_vendor->getPaymentById($id);
+
+        if(!$payment || intval($payment['store_id']) != $store_id){
+            $this->respond_fail('not_found');
+            return;
+        }
+
+        $this->model_admin_vendor->deletePayment($id, $store_id);
+
+        $this->model_admin_vendor->changeVendorBalance($payment['vendor_id'], -intval($payment['amount']));
+
+        $this->respond_json(array());
+
+    }
+
+    public function deletePurchase(){
+
+        $this->load->model('admin/vendor');
+
+        $store_id = intval( $this->config->get('config_store_id') );
+
+        $id = $this->getInput('id');
+
+        $purchase = $this->model_admin_vendor->getPurchaseById($id);
+
+        if(!$purchase || intval($purchase['store_id']) != $store_id){
+            $this->respond_fail('not_found');
+            return;
+        }
+
+        $this->model_admin_vendor->deletePurchase($id, $store_id);
+
+        $this->model_admin_vendor->changeVendorBalance($purchase['vendor_id'], intval($purchase['total_value']));
+
+        $this->respond_json(array());
+
+    }
+
 }

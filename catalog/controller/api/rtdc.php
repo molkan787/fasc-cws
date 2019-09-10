@@ -56,7 +56,8 @@ class ControllerApiRtdc extends Controller{
 				$products[] = array(
 					'id' 		=> $p['product_id'],
 					'price' 	=> $price,
-					'quantity' 	=> $p['quantity']
+					'quantity' 	=> $p['quantity'],
+					'name' 	=> $p['name']
 				);
 			}
 		}

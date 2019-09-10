@@ -72,7 +72,7 @@ class ModelAdminReport extends Model {
 		}
 
 		foreach ($query->rows as $item) {
-			$items[$item['date']] = (int)$item['total'];
+			$items[$item['date']] += (int)$item['total'];
 		}
 
 		return $items;
@@ -98,7 +98,7 @@ class ModelAdminReport extends Model {
 		}
 
 		foreach ($query->rows as $item) {
-			$items[$item['date']] = (int)$item['total'];
+			$items[$item['date']] += (int)$item['total'];
 		}
 
 		return $items;
@@ -127,8 +127,8 @@ class ModelAdminReport extends Model {
 		}
 
 		foreach ($query->rows as $item) {
-			$items[$item['date']]['w'] = $item['walkon'];
-			$items[$item['date']]['o'] = $item['online'];
+			$items[$item['date']]['w'] += $item['walkon'];
+			$items[$item['date']]['o'] += $item['online'];
 		}
 
 		return $items;

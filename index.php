@@ -12,6 +12,7 @@ if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
     //Prevent the rest of the script from executing.
     exit;
 }*/
+require_once 'updates.php';
 require_once 'vendor/autoload.php';
 
 // Version
