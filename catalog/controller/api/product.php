@@ -38,9 +38,12 @@ class ControllerApiProduct extends Controller
 
         $this->load->model('admin/product');
 
+        $user = $this->model_admin_users->loadCurrent();
+		$checkStoreId = (intval($user['user_type']) > 10);
+
         $status = ($operation == 'enable') ? 1 : 0;
         $pids = explode(',', $product_id);
-        $this->model_admin_product->setStatus($pids, $status, true);
+        $this->model_admin_product->setStatus($pids, $status, $checkStoreId);
 
         $this->respond_json('');
 
@@ -308,6 +311,11 @@ class ControllerApiProduct extends Controller
         $store_id = $this->config->get('config_store_id');
 
         $prts = $this->escapeIntArray(explode(',', $prts));
+
+        $user = $this->model_admin_users->loadCurrent();
+		if(intval($user['user_type']) < 10){
+            $store_id = false;
+        }
 
         $this->model_admin_product->setSortOrder($prts, $store_id);
 

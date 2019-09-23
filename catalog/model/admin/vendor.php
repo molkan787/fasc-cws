@@ -155,7 +155,13 @@ class ModelAdminVendor extends Model {
 
         $query = $this->db->query($sql);
 
-        return $query->rows;
+        $rows = $query->rows;
+
+        foreach($rows as &$row){
+            $row['items'] = $this->db->query("SELECT * FROM fasc_purchase_items WHERE purchase_id = " . (int)$row['id'])->rows;
+        }
+
+        return $rows;
 
     }
 

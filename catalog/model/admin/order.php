@@ -10,7 +10,9 @@ class ModelAdminOrder extends Model {
 	}
 
 	public function canCancel($order_id){
-		$timeout = (int)$this->config->get('config_cancel_order_timeout');
+		$this->load->model('admin/fasc');
+		$timeout = (int)$this->model_admin_fasc->getSettingValue($store_id, 'order_cancel_time');
+		if(!$timeout) $timeout = 3600;
 		$sql = "SELECT order_id, UNIX_TIMESTAMP(date_added) AS date_added FROM `" . DB_PREFIX . "order` WHERE order_id = '".(int)$order_id."'";
 		$query = $this->db->query($sql);
 		$can = (time() - (int)$query->row['date_added'] < $timeout);
