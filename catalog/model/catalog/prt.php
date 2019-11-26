@@ -103,8 +103,8 @@ class ModelCatalogPrt extends Model {
 		if (isset($data['stock']) && $data['stock'] !== '') {
 			$sql .= " AND p.quantity ";
 			if($data['stock'] == 'out') $sql .= "= 0";
-			else if($data['stock'] == 'low') $sql .= "< 3";
-			else if($data['stock'] == 'high') $sql .= "> 3";
+			else if($data['stock'] == 'low') $sql .= "< 12";
+			else if($data['stock'] == 'high') $sql .= ">= 12";
 		}
 
 		if (isset($data['status']) && $data['status'] !== '') {

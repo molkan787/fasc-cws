@@ -25,12 +25,15 @@ class ControllerApiPos extends Controller{
 		$this->load->model('admin/order');
 		$this->load->model('admin/product');
 		$this->load->model('admin/customer');
+		$this->load->model('admin/loyalty');
 
 		$store_id = $this->config->get('config_store_id');
 		$prts = $this->getInput('products');
 		$customerName = $this->getInput('customerName');
 		$customerPhone = $this->getInput('customerPhone');
 		$other_val = floatval($this->getInput('other_val'));
+		$loyaltyCardId = floatval($this->getInput('loyaltyCardId'));
+		$pay_method = $this->getInput('pay_method');
 
 		$customer = null;
 		if(strlen($customerPhone) == 10){
@@ -59,7 +62,12 @@ class ControllerApiPos extends Controller{
 			$products[] = $this->getProductArray(0, 'Other', 1, $other_val);
 		}
 
-		$data = $this->getOrderArray($store_id, $products, $total, $customer);
+		if($this->model_admin_loyalty->confirmStoreId($loyaltyCardId, $store_id)){
+			$loyaltyPoints = $total * 0.1;
+			$this->model_admin_loyalty->addBalance($loyaltyCardId, $loyaltyPoints);
+		}
+
+		$data = $this->getOrderArray($store_id, $products, $total, $customer, $pay_method);
 		$data['saved_amount'] = $saved;
 
 		$order_id = $this->model_checkout_order->addOrder($data);
@@ -152,7 +160,6 @@ class ControllerApiPos extends Controller{
 			$total += (int)$bsd['fast_del_cost'];
 		}
 
-
 		$data = $this->getOrderArray($store_id, $products, $total, $customer, $pay_method);
 		$data['saved_amount'] = $saved;
 
@@ -177,12 +184,23 @@ class ControllerApiPos extends Controller{
 
 	}
 
+	var $paymentsNames = array(
+		'cod' => 'Cash On Delivery',
+		'cash' => 'Cash',
+		'credit' => 'Credit',
+		'digital' => 'Card/Net banking/UPI',
+		'razor' => 'Card/Net banking/UPI'
+	);
+
+	private function getPaymentName($code){
+		$name = $this->paymentsNames[$code];
+		return $name ? $name : $this->paymentsNames['digital'];
+	}
+
 	private function getOrderArray($store_id, $products, $total, $customer = null, $pay_method = 'cod'){
-		$payment_name = $pay_method == 'cod' ? 'Cash On Delivery' : 'Credit Card/NetBanking';
+		$payment_name = $this->getPaymentName($pay_method);
 		$payment_code = $pay_method;
 		if($customer == null){
-			$payment_name = 'Cash';
-			$payment_code = 'cash';
 			$customer = array(
 				'customer_id' => '0',
 				'firstname' => 'Walk on',

@@ -1,6 +1,12 @@
 <?php
 class ModelAdminProduct extends Model {
 
+	public function allProductsNames($store_id, $langId = 1){
+		$sql = "SELECT p.product_id AS id, pd.name FROM oc_product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '".(int)$langId."' AND p.store_id = '".(int)$store_id."' GROUP BY p.product_id";
+		$query = $this->db->query($sql);
+		return $query->rows;
+	}
+
 	public function setSortOrder($prts, $store_id){
 		if(count($prts) < 1) return;
 		$_cond = $store_id ? " AND store_id = '".(int)$store_id."'" : '';
@@ -528,19 +534,20 @@ class ModelAdminProduct extends Model {
 
 	public function setProductDescription($product_id, $language_id, $value) {
 
-		$this->db->query("UPDATE " . DB_PREFIX . "product_description SET name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['name']) . "', meta_description = '" . $this->db->escape($value['description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id = '" . (int)$language_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "product_description SET name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['name']) . "', meta_description = '" . $this->db->escape($value['description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id = '" . (int)$language_id . "'");
 
 	}
 
 	public function getProductDescriptions($product_id) {
 		$product_description_data = array();
 
-		$query = $this->db->query("SELECT name, description, language_id FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
+		$query = $this->db->query("SELECT `name`, `description`, `tag`, language_id FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
 
 		foreach ($query->rows as $result) {
 			$product_description_data[$result['language_id']] = array(
 				'name'             => $result['name'],
-				'description'      => $result['description']
+				'description'      => $result['description'],
+				'tag'			   => $result['tag']
 			);
 		}
 

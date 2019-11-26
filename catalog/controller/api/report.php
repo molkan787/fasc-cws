@@ -19,6 +19,7 @@ class ControllerApiReport extends Controller{
 		$ordersPerDay = $this->model_admin_report->getOrdersPerDay($dateFrom, $dateTo);
 		$customersPerDay = $this->model_admin_report->getCustomersPerDay($dateFrom, $dateTo);
 		$salesPerDay = $this->model_admin_report->getSalesPerDay($dateFrom, $dateTo);
+
 		$this->respond_json(array(
 			'total_sales' => $total_sales,
 			'orders' => $orders,
@@ -50,6 +51,30 @@ class ControllerApiReport extends Controller{
 			'customers' => $customers
 		));
 
+	}
+
+	public function orders(){
+		$this->load->model('admin/order');
+		$dates = $this->getDatesInput();
+		$store_id = $this->config->get('config_store_id');
+		$orders = $this->model_admin_order->getPaidOrders($dates, $store_id);
+		$this->respond_json(array(
+			'dates' => $dates,
+			'items' => $orders
+		));
+	}
+
+	private function getDatesInput(){
+		$dateFrom = $this->getInput('from');
+		$dateTo = $this->getInput('to');
+
+		if(empty($dateFrom)) $dateFrom = date('Y-m-d', time() - 3600 * 24 * 7);
+		if(empty($dateTo)) $dateTo = date('Y-m-d', time());
+
+		return array(
+			'from' => $dateFrom,
+			'to' => $dateTo
+		);
 	}
 
 }

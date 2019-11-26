@@ -46,7 +46,7 @@ class ControllerApiVendor extends Controller{
         $data['store_id'] = $store_id;
 
         $vendor = $this->model_admin_vendor->getVendor($data['vendor_id']);
-
+        
         if(intval($vendor['store_id']) != intval($store_id)){
             $this->respond_fail('VENDOR_NOT_OWNED_BY_THIS_STORE');
             return;

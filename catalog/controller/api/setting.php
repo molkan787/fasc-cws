@@ -155,6 +155,9 @@ class ControllerApiSetting extends Controller
 		$this->load->model('admin/setting');
 		$this->load->model('admin/fasc');
 
+		$user = $this->model_admin_users->loadCurrent();
+		$paymentInfo = (intval($user['user_type']) < 3);
+
 		$store_id = $this->config->get('config_store_id');
 
 		$store_data = $this->model_admin_store->getStore($store_id);
@@ -166,7 +169,7 @@ class ControllerApiSetting extends Controller
 
 		if($store_data){
 			$store_data['info'] = $this->model_admin_setting->getSetting('config', $store_id);
-			$store_data['razor_key'] = $razor_key;
+			$store_data['razor_key'] = $paymentInfo ? $razor_key : '';
 			$store_data['not_phone'] = $not_phone;
 			$store_data['order_cancel_time'] = $order_cancel_time;
 		}
@@ -184,6 +187,9 @@ class ControllerApiSetting extends Controller
 		$this->load->model('admin/fasc');
 
 		$store_id = $this->config->get('config_store_id');
+
+		$user = $this->model_admin_users->loadCurrent();
+		$paymentInfo = (intval($user['user_type']) < 3);
 
 		$data = array(
 			'min_total' => $this->getInput('min_total', 0),
@@ -213,12 +219,13 @@ class ControllerApiSetting extends Controller
 		$this->model_admin_setting->editSettingValue('config', 'config_address', $config_address, $store_id);
 		$this->model_admin_setting->editSettingValue('config', 'config_order_phone', $order_phone, $store_id);
 
-		$this->model_admin_fasc->setSettingValue($store_id, 'razor_key', $razor_key);
-
 		$this->model_admin_fasc->setSettingValue($store_id, 'order_cancel_time', $order_cancel_time);
 		$this->model_admin_fasc->setSettingValue($store_id, 'not_phone', $not_phone);
-		if(strlen($razor_secret) > 0){
-			$this->model_admin_fasc->setSettingValue($store_id, 'razor_secret', $razor_secret);
+		if($paymentInfo){
+			$this->model_admin_fasc->setSettingValue($store_id, 'razor_key', $razor_key);
+			if(strlen($razor_secret) > 0){
+				$this->model_admin_fasc->setSettingValue($store_id, 'razor_secret', $razor_secret);
+			}
 		}
 
 		$this->respond_json('');

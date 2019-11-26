@@ -70,10 +70,13 @@ class ModelAdminReport extends Model {
 			$ctime -= $day_secs;
 			if($cdate == $startDate || $ctime < $timestamp) break;
 		}
-
+		$total = 0;
 		foreach ($query->rows as $item) {
-			$items[$item['date']] += (int)$item['total'];
+			$num = (int)$item['total'];
+			$total += $num;
+			$items[$item['date']] += $num;
 		}
+		$items['total'] = $total;
 
 		return $items;
 	}

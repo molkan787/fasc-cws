@@ -40,21 +40,12 @@
 {% for link in links %}
 <link href="{{ link.href }}" rel="{{ link.rel }}" />
 {% endfor %}
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MGHD7STF0L"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MGHD7STF0L');
-</script>
 
 </head>
 <body>
 <nav id="top">
   <div class="container">{{ currency }}
-    {{ language }}
+    {# {{ language }} #}
     <a class="hb_city_select" onclick="showPopup('loading');fpp_loadCities();">
       <i class="material-icons" style="font-size: 22px;margin-top: 0">location_on</i>
       {{ city }}

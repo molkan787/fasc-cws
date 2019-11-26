@@ -217,7 +217,9 @@ class ModelAdminCategory extends Model {
 		if(!$query->row) return null;
 
 		$data = $query->row;
-		$data['name'] = $this->getCategoryDescriptions($category_id);
+		$desc = $this->getCategoryDescriptions($category_id);
+		$data['name'] = $desc['name'];
+		$data['tags'] = $desc['tags'];
 
 		$query = $this->db->query($sql);
 		$data['subs'] = $query->rows;
@@ -306,15 +308,20 @@ class ModelAdminCategory extends Model {
 	}
 
 	public function getCategoryDescriptions($category_id) {
-		$category_description_data = array();
+		$name = array();
+		$tags = array();
 
-		$query = $this->db->query("SELECT language_id, name FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");
+		$query = $this->db->query("SELECT language_id, name, meta_keyword FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");
 
 		foreach ($query->rows as $result) {
-			$category_description_data[$result['language_id']] = $result['name'];
+			$name[$result['language_id']] = $result['name'];
+			$tags[$result['language_id']] = $result['meta_keyword'];
 		}
 
-		return $category_description_data;
+		return array(
+			'name' => $name,
+			'tags' => $tags,
+		);
 	}
 
 	public function setSortOrder($cats, $store_id){
@@ -329,6 +336,9 @@ class ModelAdminCategory extends Model {
 
 	public function setCategoryName($category_id, $language_id, $name){
 		$this->db->query("UPDATE " . DB_PREFIX . "category_description SET name = '".$this->db->escape($name)."', meta_title = '".$this->db->escape($name)."' WHERE category_id = '" . (int)$category_id . "' AND language_id = '" . (int)$language_id . "'");
+	}
+	public function setCategoryTags($category_id, $language_id, $tags){
+		$this->db->query("UPDATE " . DB_PREFIX . "category_description SET meta_keyword = '".$this->db->escape($tags)."' WHERE category_id = '" . (int)$category_id . "' AND language_id = '" . (int)$language_id . "'");
 	}
 	
 	public function setCategoryImage($category_id, $image){

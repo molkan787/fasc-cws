@@ -58,6 +58,8 @@ class ControllerApiCategory extends Controller{
         $image = $this->getInput('image');
         $name1 = $this->getInput('name1');
         $name2 = $this->getInput('name2');
+        $tags1 = $this->getInput('tags1');
+        $tags2 = $this->getInput('tags2');
 
         $childs = $this->getInput('childs_order');
         $childs = explode(',', $childs);
@@ -69,9 +71,11 @@ class ControllerApiCategory extends Controller{
         if(count($childs)){
             $this->model_admin_category->setSortOrder($childs, $store_id);
         }
-
+        
         $this->model_admin_category->setCategoryName($cat_id, 1, $name1);
         $this->model_admin_category->setCategoryName($cat_id, 2, $name2);
+        $this->model_admin_category->setCategoryTags($cat_id, 1, $tags1);
+        $this->model_admin_category->setCategoryTags($cat_id, 2, $tags2);
         if(!empty($image)) $this->model_admin_category->setCategoryImage($cat_id, $image);
 
         $this->respond_json(array('cat_id' => $cat_id));

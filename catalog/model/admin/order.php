@@ -2,7 +2,9 @@
 class ModelAdminOrder extends Model {
 
 	public function setStatus($order_id, $status_id){
-		$this->db->query("UPDATE " . DB_PREFIX . "order SET order_status_id = '" . (int)$status_id . "' WHERE order_id = '" . (int)$order_id . "' ");
+		$markAsPaid = (int)$status_id == 5;
+		$dataToSet = $markAsPaid ? ", paid = '1'" : "";
+		$this->db->query("UPDATE " . DB_PREFIX . "order SET order_status_id = '" . (int)$status_id . "'".$dataToSet." WHERE order_id = '" . (int)$order_id . "' ");
 	}
 
 	public function delete($order_id){
@@ -173,6 +175,15 @@ class ModelAdminOrder extends Model {
 		}
 	}
 
+	public function getPaidOrders($dateRange, $store_id){
+		$cond = "";
+		if(!empty($dateRange['from'])){ $cond = " AND DATE(date_added) >= '".$this->db->escape($dateRange['from'])."'"; }
+		if(!empty($dateRange['to'])){ $cond .= " AND DATE(date_added) <= '".$this->db->escape($dateRange['to'])."'"; }
+		$sql = "SELECT o.order_id, o.paid, o.order_status_id, o.firstname, o.lastname, o.payment_method, o.total, o.user_agent, o.date_added FROM oc_order o WHERE (o.paid = '1' OR o.order_status_id = '5') AND store_id = '".(int)$store_id."'".$cond;
+		$query = $this->db->query($sql);
+		return $query->rows;
+	}
+
 	public function getOrders($data = array()) {
 		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status, o.shipping_code, o.total, o.date_added, o.date_modified, o.order_status_id, o.paid FROM `" . DB_PREFIX . "order` o";
 
@@ -198,7 +209,7 @@ class ModelAdminOrder extends Model {
 			$search = strtolower($this->db->escape($data['filter_search']));
 			$sql .= " AND ( LOWER(CONCAT(o.firstname, ' ', o.lastname)) LIKE '%" . $search . "%' OR ";
 			$sql .= "email LIKE '%" . $search . "%' OR telephone LIKE '%" . $search . "%' OR ";
-			$sql .= "o.date_added LIKE '%" . $search . "%')";
+			$sql .= "o.date_added LIKE '%" . $search . "%' OR o.order_id = '".$search."')";
 		}
 
 		if ($data['limited']) {

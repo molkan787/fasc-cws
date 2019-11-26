@@ -102,6 +102,7 @@ class ModelAdminVendor extends Model {
         $sql = "INSERT INTO fasc_purchase SET store_id = " . (int)$data['store_id'] . ", vendor_id = " . (int)$data['vendor_id'];
         $sql .= ", invoice_no = '" . $this->db->escape($data['invoice_no']) . "'";
         $sql .= ", purchase_date = '" . $this->db->escape($data['purchase_date']) . "'";
+        $sql .= ", attachment = '" . $this->db->escape($data['attachment']) . "'";
         $sql .= ", total_value = '0', date_modified = NOW(), date_added = NOW()";
 
         $this->db->query($sql);
@@ -111,16 +112,22 @@ class ModelAdminVendor extends Model {
         $total = 0;
         foreach($data['items'] as $item){
 
+            $product = $item['product'];
+            $gst = (int)$item['gst'];
             $qty = (int)$item['qty'];
             $buy_price = floatval($item['buy_price']);
 
             $total += $buy_price * $qty;
+            
 
             $sql = 'INSERT INTO fasc_purchase_items SET purchase_id = ' . $purchase_id;
-            $sql .= ", name = '" . $this->db->escape($item['name']) . "'";
-            $sql .= ", qty = " . $qty . ", rate = " . (int)$item['rate'] . ", gst = " . (int)$item['gst'];
+            $sql .= ", name = '" . $this->db->escape($product['name']) . "'";
+            $sql .= ", qty = " . $qty . ", rate = " . (int)$item['rate'] . ", gst = " . $gst;
             $sql .= ", buy_price = '" . $buy_price . "', sell_price = '" . floatval($item['sell_price']) . "'";
 
+            $this->db->query($sql);
+
+            $sql = "UPDATE oc_product SET quantity = quantity + '".$qty."', gst = '".$gst."' WHERE product_id = '".(int)$product['id']."'";
             $this->db->query($sql);
 
         }

@@ -158,4 +158,17 @@ class ModelAdminUsers extends Model {
 		$this->db->query($sql);
 	}
 
+	public function editUsername($user_id, $username){
+		if(!ctype_alnum($username)) return 2; // ERROR 2 = Invalid input.
+		$escaped = $this->db->escape($username);
+		$sql = "SELECT user_id FROM fasc_users WHERE username = '".$escaped."'";
+		$query = $this->db->query($sql);
+		if($query->num_rows > 0){
+			return 1; // ERROR 1 = Username already used.
+		}
+		$sql = "UPDATE fasc_users SET username = '".$escaped."' WHERE user_id = '".(int)$user_id."'";
+		$this->db->query($sql);
+		return 0; // Code 0 = Success
+	}
+
 }
