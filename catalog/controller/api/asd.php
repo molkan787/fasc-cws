@@ -30,6 +30,7 @@ class ControllerApiAsd extends Controller{
 			$this->model_admin_customer->setCustomerStoreId($this->customer->getId(), $store_id);
 		}
 
+		// $cps_categories = $this->model_admin_category->getCategoriesWithChilds(0);
 		$categories = $this->model_admin_category->getCategoriesWithChilds();
 		$banners = $this->model_admin_banner->getBannerImages(7, $this->config->get('config_store_id'), true);
 		$gls = $this->model_admin_gls->get();
@@ -60,7 +61,8 @@ class ControllerApiAsd extends Controller{
 			'session_id' => $this->session->getId(),
 			'store_id' => $store_id,
 			'city_names' => $city_names,
-			'cats' => $categories,
+			// 'cats' => $categories,
+			'cps_cats' => $cps_categories,
 			'banners' => $banners,
 			'gls' => $gls,
 			'customer' => $customer,

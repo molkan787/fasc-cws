@@ -270,10 +270,11 @@ class ModelAdminCategory extends Model {
 		return $query->rows;
 	}
 
-	public function getCategoriesWithChilds(){
+	public function getCategoriesWithChilds($store_id = -1){
+		if($store_id == -1) $store_id = $this->config->get('config_store_id');
 		$this->load->model('tool/image');
 		$sql = "SELECT c.category_id, c.parent_id, c.image, c.gtype, c.sort_order, cd.name FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) ";
-		$sql .= "LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE c2s.store_id = '".(int)$this->config->get('config_store_id')."' AND cd.language_id = '".(int)$this->config->get('config_language_id')."'";
+		$sql .= "LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE c2s.store_id = '".(int)$store_id."' AND cd.language_id = '".(int)$this->config->get('config_language_id')."'";
 		$sql .= " GROUP BY c.category_id ORDER BY c.sort_order, LCASE(cd.name)";
 
 		$query = $this->db->query($sql);

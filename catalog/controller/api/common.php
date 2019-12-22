@@ -16,7 +16,8 @@ class ControllerApiCommon extends Controller
 		}
 
 		$data = array();
-		$data['categories'] = $this->getCats();
+		$data['categories'] = $this->getCats(-1);
+		$data['cps_categories'] = $this->getCats(0);
 		$data['user'] = $user;
 		$data['contact_info'] = $this->getContactInfo();
 
@@ -37,21 +38,21 @@ class ControllerApiCommon extends Controller
 		);
 	}
 
-	private function getCats(){
+	private function getCats($store_id){
 		$this->load->model('catalog/category');
 		$this->load->model('tool/image');
 
 		$data = array();
 
-		$cats = $this->model_catalog_category->getCategories(0, -1);
+		$cats = $this->model_catalog_category->getCategories(0, -1, $store_id);
 
 		$subcats = array();
 
 		foreach ($cats as $cat) {
-			$subs = $this->model_catalog_category->getCategories($cat['category_id'], -1);
+			$subs = $this->model_catalog_category->getCategories($cat['category_id'], -1, $store_id);
 			$subcats[$cat['category_id']] = $this->getCatsBasis($subs, true);
 			foreach ($subs as $sub) {
-				$childs = $this->model_catalog_category->getCategories($sub['category_id'], -1);
+				$childs = $this->model_catalog_category->getCategories($sub['category_id'], -1, $store_id);
 				$subcats[$sub['category_id']] = $this->getCatsBasis($childs, true);
 			}
 		}

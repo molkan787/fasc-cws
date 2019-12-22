@@ -80,6 +80,12 @@ class ModelCatalogPrt extends Model {
 		return $query->rows;
 	}
 
+	public function getCountByStore($store_id){
+		$sql = "SELECT count(*) as total from oc_product WHERE store_id = " . (int)$store_id;
+		$query = $this->db->query($sql);
+		return $query->row['total'];
+	}
+
 	public function getProducts($data = array()) {
         $this->load->model('tool/image');
         $this->load->model('account/wishlist');

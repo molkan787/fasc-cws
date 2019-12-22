@@ -149,12 +149,14 @@ class ControllerApiProduct extends Controller
 
 
         $products = $this->model_catalog_prt->getProducts($filters);
+        $total = $this->model_catalog_prt->getCountByStore($filters['store']);
         //$products = $this->model_admin_product->getProducts($filters);
         $list = $products;
         $data = new stdClass();
         $data->length = count($list);
         $data->items = $list;
         $data->child_subcat = $child_subcat;
+        $data->total = $total;
 
         $this->respond_json($data);
     }
