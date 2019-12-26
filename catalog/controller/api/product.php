@@ -130,7 +130,7 @@ class ControllerApiProduct extends Controller
                 $filters['order'] = 'ASC';
             }
         }else{
-            $filters['order_by'] = 'p.sort_order';
+            $filters['order_by'] = 'p.sort_order, p.product_id';
             $filters['order'] = 'ASC';
         }
 
@@ -379,7 +379,7 @@ class ControllerApiProduct extends Controller
             'filter' => '',
             'product_store' =>
                 array(
-                    0 => $this->config->get('config_store_id')
+                    0 => $store_id
                 ),
             'download' => '',
             'related' => '',
