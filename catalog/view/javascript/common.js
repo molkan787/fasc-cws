@@ -22,8 +22,112 @@ function getURLVar(key) {
 	}
 }
 
+var add2CartButtons = {
+	state: {},
+	ready: false,
+	init: function(){
+		var btns = document.querySelectorAll('button[onclick^="cart.add("]');
+		for(var i = 0; i < btns.length; i++){
+			var btn = btns[i];
+			var attr = btn.getAttribute('onclick');
+			var highlighted = btn.getAttribute('highlighted');
+			var pid = this.extractID(attr);
+			btns[i].outerHTML = this.craftButton(pid, highlighted);
+		}
+		this.setItems(cartData);
+		this.ready = true;
+	},
+
+	trySetItems(items){
+		if(this.ready){
+			this.setItems(items);
+		}
+	},
+
+	setItems(items){
+		var oldState = this.state;
+		this.state = {};
+		for(var i = 0; i < items.length; i++){
+			var item = items[i];
+			var pid = item.pid;
+			this.state[pid] = parseInt(item.qty);
+			this.updateButtonState(pid, parseInt(item.qty));
+			delete oldState[pid];
+		}
+		for(var pid in oldState){
+			this.updateButtonState(pid, 0);
+		}
+		console.log('Items setted!')
+	},
+
+	remove(pid){
+		delete this.state[pid];
+		this.updateButtonState(pid, 0);
+	},
+
+	alterQty(pid, qty){
+		if(typeof this.state[pid] != 'number'){
+			this.state[pid] = 0;
+		}
+		this.state[pid] += qty;
+		this.updateButtonState(pid, this.state[pid]);
+		cart.add(pid, qty);
+	},
+
+	updateButtonState(pid, qty){
+		var a2c_btn = getElt('productBtn_a2c_' + pid);
+		var qty_btn = getElt('productBtn_qty_' + pid);
+		if(!a2c_btn || !qty_btn) return;
+		if(qty > 0){
+			a2c_btn.style.display = 'none';
+			qty_btn.style.display = 'inline-block';
+			getElt('productBtn_qty_count_' + pid).innerText = qty;
+		}else{
+			a2c_btn.style.display = 'inline-block';
+			qty_btn.style.display = 'none';
+		}
+	},
+
+	craftButton: function (pid, highlighted){
+		return `
+			<div id="productBtn_a2c_${pid}" class="productBtn add2cartBtn ${highlighted ? 'highlighted' : ''}">
+				<button onclick="add2CartButtons.alterQty(${pid}, 1)">
+					<i class="fa fa-shopping-cart"></i> Add
+				</button>
+			</div>
+			<div id="productBtn_qty_${pid}" class="productBtn cartQtyBtn" style="display: none">
+				<button class="left" onclick="add2CartButtons.alterQty(${pid}, -1)">-</button>
+				<label id="productBtn_qty_count_${pid}">1</label>
+				<button class="right" onclick="add2CartButtons.alterQty(${pid}, 1)">+</button>
+			</div>
+		`;
+	},
+
+	extractID: function(attr){
+		var id = '';
+		var started = false;
+		for(var i = 0; i < attr.length; i++){
+			// cart.add('100', '1');
+			var char = attr.charAt(i);
+			if(started){
+				if(char === "'"){
+					break;
+				}else{
+					id += char;
+				}
+			}else{
+				if(char === "'"){
+					started = true;
+				}
+			}
+		}
+		return id;
+	}
+};
+
 $(document).ready(function() {
 	// Highlight any found errors
+	add2CartButtons.init();
 	$('.text-danger').each(function() {
 		var element = $(this).parent().parent();
 
@@ -157,7 +261,7 @@ var cart = {
 				}
 
 				if (json['success']) {
-					$('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					// $('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 					// Need to set timeout otherwise it wont update the total
 					setTimeout(function () {
@@ -224,7 +328,7 @@ var cart = {
 				if (getURLVar('route') == 'checkout/cart' || getURLVar('route') == 'checkout/checkout') {
 					location = 'index.php?route=checkout/cart';
 				} else {
-					$('#cart > ul').load('index.php?route=common/cart/info ul li');
+					$('#cart').load('index.php?route=common/cart/info');
 				}
 			},
 			error: function(xhr, ajaxOptions, thrownError) {

@@ -797,18 +797,21 @@ h2.price {
 	}
 }
 
-.product-thumb .button-group button {
-	width: 60%;
-	border: none;
-	display: inline-block;
-	float: left;
-	background-color: transparent;
-	color: #888;
-	line-height: 38px;
-	font-weight: bold;
-	text-align: center;
-	text-transform: uppercase;
-	transition: background-color 0.4s, color 0.4s;
+.product-thumb .button-group > button {
+	width: 36px;
+    border: none;
+    display: inline-block;
+    float: left;
+    background-color: transparent;
+    color: #888;
+    line-height: 30px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    transition: background-color 0.4s, color 0.4s;
+    padding-top: 4px;
+	outline: none;
+	border-radius: 100px !important;
 }
 
 .product-thumb .button-group button+button {
@@ -820,6 +823,72 @@ h2.price {
 	background-color: #ddd;
 	text-decoration: none;
 	cursor: pointer;
+}
+
+.productBtn{
+	width: 65%;
+	display: inline-block;
+	float: right;
+	text-align: center;
+	padding: 2px;
+	border-radius: 100px;
+}
+.productBtn button{
+	padding: 5px !important;
+	width: 32px !important;
+	height: 32px !important;
+	line-height: 1 !important;
+	font-size: 22px !important;
+}
+
+.add2CartBtn{
+	background-color: rgb(216, 216, 216);
+	padding: 0 !important;
+}
+.add2cartBtn.highlighted, .add2cartBtn.highlighted button{
+	background-color: #F36F24;
+	color: white;
+}
+.add2cartBtn button{
+	width: 100% !important;
+	border: none;
+	outline: none;
+	font-size: 16px !important;
+	transition: opacity 0.1s;
+}
+.add2cartBtn button:active{
+	opacity: 0.7;
+}
+.add2cartBtn button i{
+	font-size: 16px !important;
+}
+
+.cartQtyBtn{
+	background-color: #F36F24;
+}
+.cartQtyBtn label{
+	color: white;
+    font-weight: bold;
+    font-size: 17px;
+    line-height: 1.9;
+    margin-bottom: -10px;
+}
+.cartQtyBtn button{
+	border-radius: 100px !important;
+	color: #F36F24;
+	background-color: white;
+	border: none;
+	outline: none;
+	transition: opacity 0.1s, background 0.3s, color 0.3s;
+}
+.cartQtyBtn button:active{
+	opacity: 0.7;
+}
+.cartQtyBtn .left{
+	float: left;
+}
+.cartQtyBtn .right{
+	float: right;
 }
 
 @media (max-width: 1200px) {

@@ -10,7 +10,7 @@ class ModelAdminProduct extends Model {
 	public function setSortOrder($prts, $store_id){
 		if(count($prts) < 1) return;
 		$_cond = $store_id ? " AND store_id = '".(int)$store_id."'" : '';
-		$i = 0;
+		$i = 1;
 		foreach ($prts as $prt) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET sort_order = '".($i++)."' WHERE product_id = '".(int)$prt."'" . $_cond);
 		}

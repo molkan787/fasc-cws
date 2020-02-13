@@ -21,7 +21,7 @@ class ControllerApiAccount extends Controller{
 		$correct_pwd = $this->model_admin_users->checkPassword($user_id, $old);
 
 		if($correct_pwd){
-			$this->model_admin_users->setPassword($user_id, $new);
+			$this->model_admin_users->setPassword($user_id, $new, true);
 			$this->respond_json('');
 		}else{
 			$this->respond_fail('wrong_password');

@@ -14,7 +14,7 @@ class ModelAdminUsers extends Model {
 		$this->loaded = true;
 
 		$token = (isset($_GET['api_token']) ? $_GET['api_token'] : '');
-
+		
 		if(empty($token)) return null;
 
 		$sql = "SELECT * FROM fasc_users_toks WHERE `token` = '".$this->db->escape($token)."' AND added_date > (NOW() - INTERVAL 30 DAY) LIMIT 1";
@@ -111,14 +111,14 @@ class ModelAdminUsers extends Model {
 		$this->db->query($sql);
 	}
 
-	public function setPassword($user_id, $password){
+	public function setPassword($user_id, $password, $force = false){
 		$salt = generateRandomString(9);
 		$password = md5($password.$salt);
 
 		$sql = "SELECT user_type FROM fasc_users WHERE user_id = '".(int)$user_id."'";
 		$query = $this->db->query($sql);
 		if($query->num_rows == 0) return false;
-		if(intval($query->row['user_type']) == 1) return false;
+		if(!$force AND intval($query->row['user_type']) == 1) return false;
 
 		$sql = "UPDATE fasc_users SET `password` = '".$this->db->escape($password)."', `salt` = '".$this->db->escape($salt)."'";
 		$sql .= ", modified_date = NOW() WHERE user_id = '".(int)$user_id."'";

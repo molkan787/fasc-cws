@@ -14,7 +14,7 @@
     {% set class = 'col-sm-12' %}
     {% endif %}
     <div id="content" class="{{ class }}">{{ content_top }}
-      <div class="row"> {% if column_left or column_right %}
+      <div id="main_row" class="row"> {% if column_left or column_right %}
         {% set class = 'col-sm-6' %}
         {% else %}
         {% set class = 'col-sm-8' %}
@@ -31,6 +31,7 @@
             {% endif %}
           </ul>
           {% endif %}
+          <div id="con_aft_thumbs"></div>
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
             {% if attribute_groups %}
@@ -115,11 +116,7 @@
         {% else %}
         {% set class = 'col-sm-4' %}
         {% endif %}
-        <div class="{{ class }}">
-          <div class="btn-group">
-            <button type="button" data-toggle="tooltip" class="btn btn-default mr-r-6" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"><i class="fa fa-heart"></i></button>
-            <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"><i class="fa fa-exchange"></i></button>
-          </div>
+        <div id="prt_title_price" class="{{ class }}">
           <h1>{{ heading_title }}</h1>
           <ul class="list-unstyled">
             {% if manufacturer %}
@@ -272,12 +269,18 @@
               <div class="help-block" id="recurring-description"></div>
             </div>
             {% endif %}
-            <div class="form-group">
-              <label class="control-label" for="input-quantity">{{ entry_qty }}</label>
-              <input {% if out_of_stock %} disabled {% endif %} type="text" name="quantity" value="{{ minimum }}" size="2" id="input-quantity" class="form-control" />
-              <input type="hidden" name="product_id" value="{{ product_id }}" />
-              <br />
-              <button {% if out_of_stock %} disabled {% endif %} type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button>
+            <div class="form-group" style="width: 60%;">
+              {# <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
+              {# <input {% if out_of_stock %} disabled {% endif %} type="text" name="quantity" value="{{ minimum }}" size="2" id="input-quantity" class="form-control" /> #}
+              {# <input type="hidden" name="product_id" value="{{ product_id }}" /> #}
+              {# <br /> #}
+              <div class="btn-group">
+                <button type="button" style="border-radius: 100px !important;padding: 11px 11px 7px 11px !important;" data-toggle="tooltip" class="btn btn-default mr-r-6" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"><i class="fa fa-heart"></i></button>
+                {# <button {% if out_of_stock %} disabled {% endif %} type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button> #}
+                <div style="width: 175px;margin-left: -15px;">
+                  <button highlighted="1" onclick="cart.add('{{ product_id }}')"/>
+                </div>
+              </div>
             </div>
             {% if minimum > 1 %}
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
@@ -326,7 +329,6 @@
             <div class="button-group">
               <button type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span> <i class="fa fa-shopping-cart"></i></button>
               <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
-              <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
             </div>
           </div>
         </div>
@@ -546,4 +548,13 @@ $(document).ready(function() {
 	});
 });
 //--></script> 
+<script>
+window.addEventListener('resize', updateTAP_Pos);
+function updateTAP_Pos(){
+  var tapEl = getElt('prt_title_price');
+  var destP = getElt(window.innerWidth <= 767 ? 'con_aft_thumbs' : 'main_row');
+  destP.appendChild(tapEl);
+}
+updateTAP_Pos();
+</script>
 {{ footer }} 

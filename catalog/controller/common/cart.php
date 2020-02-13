@@ -53,6 +53,7 @@ class ControllerCommonCart extends Controller {
 		$this->load->model('tool/upload');
 
 		$data['products'] = array();
+		$data['prts'] = array();
 
 		foreach ($this->cart->getProducts() as $product) {
 			if ($product['image']) {
@@ -106,6 +107,10 @@ class ControllerCommonCart extends Controller {
 				'total'     => $total,
 				'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 			);
+			$data['prts'][] = array(
+				'pid'   => $product['product_id'],
+				'qty'  => $product['quantity']
+			);
 		}
 
 		// Gift Voucher
@@ -120,6 +125,8 @@ class ControllerCommonCart extends Controller {
 				);
 			}
 		}
+
+		$data['prts'] = json_encode($data['prts']);
 
 		$data['totals'] = array();
 
