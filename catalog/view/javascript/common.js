@@ -26,6 +26,9 @@ var add2CartButtons = {
 	state: {},
 	ready: false,
 	init: function(){
+		for(var span of document.querySelectorAll('span.price-tax')){
+			span.outerHTML = '';
+		}
 		var btns = document.querySelectorAll('button[onclick^="cart.add("]');
 		for(var i = 0; i < btns.length; i++){
 			var btn = btns[i];

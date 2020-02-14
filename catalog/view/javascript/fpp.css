@@ -59,7 +59,7 @@
 
 .popup>div.content>button {
   border: 1px solid white;
-  font-size: 18px;
+  font-size: 15px;
   padding: 8px 10px;
   width: 300px;
   background-color: #F36F24;
@@ -100,4 +100,22 @@
   padding: 6px;
   font-size: 14px;
   cursor: pointer;
+}
+
+.select2-container{
+  font-size: 17px !important;
+}
+.select2-selection--single{
+  border-radius: 8px !important;
+  height: 36px !important;
+}
+.select2-selection__rendered{
+  line-height: 36px !important;
+}
+.select2-selection__arrow{
+  height: 34px !important;
+  right: 4px !important;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single{
+  opacity: 0;
 }

@@ -15,6 +15,8 @@ function fpp_loadCities(){
 }
 
 $(window).ready( () => {
+    $("#pp_cities").select2();
+    $("#pp_regions").select2();
     $('#pp_cities').change(pp_city_changed);
     $('#pp_regions').change(pp_region_changed);
     $('#pp_city_btn').click(pp_city_btn_click);
@@ -24,7 +26,7 @@ $(window).ready( () => {
 });
 
 function pp_city_changed(){
-    let city_id = fpp_cc = this.value;
+    let city_id = fpp_cc = $(this).val();
     if(!city_id){
         hideElts('#pp_regions,#pp_regions_header,#pp_city_btn');
         return;
@@ -47,7 +49,7 @@ function load_regions(regions){
     }
 }
 function pp_region_changed(){
-    let region = fpp_cr = this.value;
+    let region = fpp_cr = $(this).val();
     if(region){
         revealElts('#pp_city_btn');
     }else{

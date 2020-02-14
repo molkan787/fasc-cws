@@ -2,10 +2,6 @@ body {
   font-family: 'Nunito', sans-serif;
 }
 
-span {
-  border-radius: 50% !important;
-}
-
 #top-links a:hover i, #top-links a:hover span {
   color: #F36F24 !important;
 }
