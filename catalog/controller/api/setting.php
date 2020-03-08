@@ -84,10 +84,15 @@ class ControllerApiSetting extends Controller
 
 		checkAccess(AG_MASTER_ADMIN);
 
+		$store_id = (int)$this->getInput('store_id', 0);
+		$newStore = $store_id == 0;
 		$store_name = $this->getInput('name');
 		$owner_name = $this->getInput('owner_name');
 		$city_id = (int)$this->getInput('city_id', 0);
 		$region_id = (int)$this->getInput('region_id', 0);
+		$gstin = $this->getInput('gstin', '');
+		$reg_no = $this->getInput('reg_no', '');
+		$fssai = $this->getInput('fssai', '');
 
 
 		if(strlen($store_name) < 5 or strlen($store_name) > 30 or strlen($owner_name) < 8 or strlen($owner_name) > 40){
@@ -102,15 +107,21 @@ class ControllerApiSetting extends Controller
 		$config_url = $this->model_admin_store->getDefaultUrl();
 
 		$data = $this->getDataArray($store_name, $config_url, $city_id, $region_id);
+		$data['gstin'] = $gstin;
+		$data['reg_no'] = $gstin;
+		$data['fssai'] = $gstin;
 
-		$store_id = $this->model_admin_store->addStore($data);
+		if($newStore) $store_id = $this->model_admin_store->addStore($data);
 
 		$this->model_admin_setting->editSetting('config', $data, $store_id);
 
-		$username = 's'.$store_id.'_admin';
-		$password = _generateRandomString(10);
-
-		$this->model_admin_users->createUser($store_id, AG_ADMIN, $username, $password, $owner_name);
+		$username = NULL;
+		$password = NULL;
+		if($newStore){
+			$username = 's'.$store_id.'_admin';
+			$password = _generateRandomString(10);
+			$this->model_admin_users->createUser($store_id, AG_ADMIN, $username, $password, $owner_name);
+		}
 
 		$this->respond_json(array('store_id' => $store_id, 'admin' => $username, 'password' => $password));
 
