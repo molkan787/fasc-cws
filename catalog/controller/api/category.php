@@ -54,6 +54,7 @@ class ControllerApiCategory extends Controller{
 
         $gtype = (int)$this->getInput('gtype');
         $parent = (int)$this->getInput('parent');
+        $is_cps = $this->getInput('cps') == 'true';
         $cat_id = $this->getInput('cat_id');
         $image = $this->getInput('image');
         $name1 = $this->getInput('name1');
@@ -66,6 +67,7 @@ class ControllerApiCategory extends Controller{
 
         if($cat_id == 'new'){
             $data = $this->getArrayData($parent, $gtype);
+            if($is_cps) $data['category_store'] = [0];
             $cat_id = $this->model_admin_category->addCategory($data);
         }
         if(count($childs)){

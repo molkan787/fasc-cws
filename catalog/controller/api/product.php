@@ -113,7 +113,7 @@ class ControllerApiProduct extends Controller
         $filters['cat'] = $this->getInput('cat', '');
         $filters['subcat'] = $this->getInput('subcat', '');
         $filters['child_subcat'] = $this->getInput('child_subcat', '');
-        $filters['name'] = $this->getInput('name', '');
+        $filters['search'] = $this->getInput('name', '');
         $filters['stock'] = $this->getInput('stock', '');
         $filters['discount'] = $this->getInput('discount', '');
         if($ptype == 'cps'){
@@ -292,11 +292,49 @@ class ControllerApiProduct extends Controller
             return $p['product_id'];
         };
 
-        // Products ids list is now safe (filtred out products that belong to some stores)
+        // Products ids list is now safe (filtred out products that belong to other stores)
         $ids = array_map($getId, $products);
 
         foreach($ids as $id){
             $new_id = $this->model_admin_product->copyProduct($id, $store_id);
+            $this->model_admin_product->setStatus(array($new_id), 0);
+        }
+
+        $this->respond_json($ids);
+
+    }
+
+    public function copyCPSP_FromCategory(){
+        $source_cat = (int)$this->getInput('source_cat');
+        $target_cat = (int)$this->getInput('target_cat');
+        if(empty($source_cat) || empty($target_cat)){
+            $this->respond_fail('invalid_input');
+            return;
+        }
+
+
+        $this->load->model('admin/category');
+        $this->load->model('admin/product');
+
+        $cat_store_id = $this->model_admin_category->getCategoryStoreId($source_cat);
+        if($cat_store_id !== 0){
+            $this->respond_fail('source_category_not_found');
+            return;
+        }
+
+        $store_id = (int)$this->config->get('config_store_id');
+        $cat_store_id = $this->model_admin_category->getCategoryStoreId($target_cat);
+
+        if($cat_store_id !== $store_id){
+            $this->respond_fail('target_category_not_found');
+            return;
+        }
+
+        $ids = $this->model_admin_product->getProductsIdsByCategory($source_cat);
+
+        foreach($ids as $id){
+            $new_id = $this->model_admin_product->copyProduct($id, $store_id,
+                ['category_id' => $target_cat]);
             $this->model_admin_product->setStatus(array($new_id), 0);
         }
 

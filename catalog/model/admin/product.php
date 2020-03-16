@@ -1,6 +1,14 @@
 <?php
 class ModelAdminProduct extends Model {
 
+	public function getProductsIdsByCategory($cat_id){
+		$sql = "SELECT product_id FROM " . DB_PREFIX . "product WHERE cat = ".(int)$cat_id;
+		$query = $this->db->query($sql);
+		return array_map(function ($row){
+			return $row['product_id'];
+		}, $query->rows);
+	}
+
 	public function allProductsNames($store_id, $langId = 1){
 		$sql = "SELECT p.product_id AS id, pd.name FROM oc_product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '".(int)$langId."' AND p.store_id = '".(int)$store_id."' GROUP BY p.product_id";
 		$query = $this->db->query($sql);
@@ -319,7 +327,7 @@ class ModelAdminProduct extends Model {
 		$this->cache->delete('product');
 	}
 
-	public function copyProduct($product_id, $destStoreId = null) {
+	public function copyProduct($product_id, $destStoreId = null, $patch = null) {
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "product p WHERE p.product_id = '" . (int)$product_id . "'");
 
 		if ($query->num_rows) {
@@ -349,14 +357,27 @@ class ModelAdminProduct extends Model {
 			if($destStoreId !== null){
 				$data['product_store'] = array($destStoreId);
 				$data['store_id'] = $destStoreId;
-			} 
+			}
+
+			$row = $query->row;
+			if($patch !== null){
+				$cat_id = (int)$patch['category_id'];
+				$data['product_category'] = [$cat_id];
+				$data['cat'] = $cat_id;
+				$row['cat'] = $cat_id;
+			};
+
+			$data['subcat'] = 0;
+			$row['subcat'] = 0;
+			$data['child_subcat'] = 0;
+			$row['child_subcat'] = 0;
 
 			$pid = $this->addProduct($data);
 
 			$sql = "UPDATE " . DB_PREFIX . "product SET ";
 			$first = true;
-			foreach($query->row as $p => $v){
-				if($p == 'product_id' || $p == 'barcode' || $p == 'stock' || $p == 'store_id') continue;
+			foreach($row as $p => $v){
+				if($p == 'product_id' || $p == 'stock' || $p == 'store_id') continue;
 				if($first){
 					$first = false;
 				}else{

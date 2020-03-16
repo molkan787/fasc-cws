@@ -26,6 +26,14 @@ class ModelAdminStore extends Model {
 		return $query->row['value'];
 	}
 
+	public function editStoreBasis($store_id, $data){
+		$name = $this->db->escape($data['name']);
+		$city_id = (int)$data['city_id'];
+		$region_id = (int)$data['region_id'];
+		$this->db->query("UPDATE " . DB_PREFIX . "store SET name = '".$name."', city_id = ".$city_id.", region_id = ".$region_id." WHERE store_id = " . (int)$store_id);
+		$this->cache->delete('store');
+	}
+
 	public function editStore($store_id, $data) {
 		$this->db->query("UPDATE " . DB_PREFIX . "store SET min_total = '" . (int)$data['min_total'] . "', timing_from = '" . (int)$data['timing_from'] . "', timing_to = '" . (int)$data['timing_to'] . "', timing_slot = '" . (int)$data['timing_slot'] . "', fast_del_cost = '".(int)$data['fast_del_cost']."' WHERE store_id = '" . (int)$store_id . "'");
 
@@ -99,9 +107,25 @@ class ModelAdminStore extends Model {
 		}
 
 		$query = $this->db->query($sql);
-		$store_data = $query->rows;
+		$stores = $query->rows;
+		$result = [];
+		foreach ($stores as $store) {
+			$legalInfos = $this->getStoreLegalInfos($store['store_id']);
+			$result[] = array_merge($store, $legalInfos);
+		}
+		
+		return $result;
+	}
 
-		return $store_data;
+	public function getStoreLegalInfos($store_id){
+		$sql = "SELECT `key`, `value` FROM " . DB_PREFIX . "setting WHERE `key` IN ('config_fssai', 'config_reg_no', 'config_gstin', 'config_owner_name') AND store_id = ".(int)$store_id;
+		$query = $this->db->query($sql);
+		$result = [];
+		foreach($query->rows as $row){
+			$key = substr($row['key'], 7);
+			$result[$key] = $row['value'];
+		}
+		return $result;
 	}
 
 	public function getTotalStores() {

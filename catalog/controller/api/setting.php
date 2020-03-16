@@ -107,11 +107,16 @@ class ControllerApiSetting extends Controller
 		$config_url = $this->model_admin_store->getDefaultUrl();
 
 		$data = $this->getDataArray($store_name, $config_url, $city_id, $region_id);
-		$data['gstin'] = $gstin;
-		$data['reg_no'] = $gstin;
-		$data['fssai'] = $gstin;
+		$data['config_gstin'] = $gstin;
+		$data['config_reg_no'] = $reg_no;
+		$data['config_fssai'] = $fssai;
+		$data['config_owner_name'] = $owner_name;
 
-		if($newStore) $store_id = $this->model_admin_store->addStore($data);
+		if($newStore){
+			$store_id = $this->model_admin_store->addStore($data);
+		}else{
+			$this->model_admin_store->editStoreBasis($store_id, $data);
+		}
 
 		$this->model_admin_setting->editSetting('config', $data, $store_id);
 
@@ -251,6 +256,7 @@ class ControllerApiSetting extends Controller
 			  "config_meta_description" => "",
 			  "config_meta_keyword" => "",
 			  "config_name" => $name,
+			  "name" => $name,
 			  "config_address" => "",
 			  "config_email" => "",
 			  "config_telephone" => "",

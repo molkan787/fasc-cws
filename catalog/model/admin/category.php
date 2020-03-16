@@ -1,5 +1,12 @@
 <?php
 class ModelAdminCategory extends Model {
+
+	public function getCategoryStoreId($cat_id){
+		$sql = "SELECT store_id FROM " . DB_PREFIX . "category_to_store WHERE category_id = " . (int)$cat_id;
+		$query = $this->db->query($sql);
+		return (int)$query->row['store_id'];
+	}
+
 	public function addCategory($data) {
 		$this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', gtype = '" . (int)$data['gtype'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW(), date_added = NOW()");
 

@@ -106,6 +106,12 @@ class ModelCatalogPrt extends Model {
 			$sql .= " AND (pd.name LIKE '%" . $name . "%' OR p.product_id = '" . $name . "')";
 		}
 
+		if (!empty($data['search'])) {
+			$search = $this->db->escape($data['search']);
+			$sql .= " AND (pd.name LIKE '%" . $search . "%' OR p.product_id = '" . $search . "' OR p.barcode = '" . $search . "')";
+		}
+
+
 		if (isset($data['stock']) && $data['stock'] !== '') {
 			$sql .= " AND p.quantity ";
 			if($data['stock'] == 'out') $sql .= "= 0";
