@@ -168,7 +168,7 @@ class ModelCatalogPrt extends Model {
 		}
 
 		$query = $this->db->query($sql);
-
+		
 		$result = array();
 		$l = count($query->rows);
 
@@ -214,11 +214,12 @@ class ModelCatalogPrt extends Model {
 		};
 		$ids = count($ids) ? implode(',', array_map($cast2Int, $ids)) : false;
 
-		$sql = "SELECT p.product_id, p.cat, p.barcode, p.quantity, p.price, p.discount_amt, p.discount_type, pd.name FROM " . DB_PREFIX . "product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) WHERE p.date_modified >= FROM_UNIXTIME(".(int)$time.") GROUP BY p.product_id";
+		$sql = "SELECT p.product_id, p.cat, p.barcode, p.quantity, p.price, p.discount_amt, p.discount_type, pd.name FROM " . DB_PREFIX . "product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) WHERE p.date_modified >= FROM_UNIXTIME(".(int)$time.")";
 
 		if($ids){
-			$sql .= " AND product_id IN (".$ids.")";
+			$sql .= " AND p.product_id IN (".$ids.")";
 		}
+		$sql .= " GROUP BY p.product_id";
 
 		$query = $this->db->query($sql);
 		return $query->rows;

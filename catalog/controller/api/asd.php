@@ -150,7 +150,6 @@ class ControllerApiAsd extends Controller{
 			'products' => $products,
 			'time' => time()
 		));
-
 	}
 
 	private function setStoreId($store_id){

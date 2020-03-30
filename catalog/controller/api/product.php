@@ -130,7 +130,7 @@ class ControllerApiProduct extends Controller
                 $filters['order'] = 'ASC';
             }
         }else{
-            $filters['order_by'] = 'p.sort_order, p.product_id';
+            $filters['order_by'] = 'p.product_id ASC, p.sort_order';
             $filters['order'] = 'ASC';
         }
 

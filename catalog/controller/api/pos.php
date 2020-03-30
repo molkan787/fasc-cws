@@ -62,6 +62,19 @@ class ControllerApiPos extends Controller{
 			$products[] = $this->getProductArray(0, 'Other', 1, $other_val);
 		}
 
+		$whole = floor($total);
+		$decimal = $total - $whole;
+		$roundoff = 0;
+		if($decimal != 0){
+			if($decimal >= 0.5){
+				$roundoff = 1 - $decimal;
+			}else{
+				$roundoff = -$decimal;
+			}
+			$products[] = $this->getProductArray(0, 'Sales Roundoff account', 1, $roundoff);
+			$total += $roundoff;
+		}
+
 		if($this->model_admin_loyalty->confirmStoreId($loyaltyCardId, $store_id)){
 			$loyaltyPoints = $total * 0.1;
 			$this->model_admin_loyalty->addBalance($loyaltyCardId, $loyaltyPoints);
@@ -79,6 +92,7 @@ class ControllerApiPos extends Controller{
 			'order_id' => $order_id,
 			'customer' => $customer['firstname'] . ' ' . $customer['lastname'],
 			'saved' => $saved,
+			'roundoff' => $roundoff,
 		));
 
 	}
@@ -149,10 +163,23 @@ class ControllerApiPos extends Controller{
 				else $price -= $discount;
 			}
 			$ltotal = $price * intval($prts[$id]);
-			$real_ltotal = $real_ltotal * intval($prts[$id]);
+			$real_ltotal = $real_price * intval($prts[$id]);
 			$total += $ltotal;
 			$saved += $real_ltotal - $ltotal;
 			$products[] = $this->getProductArray($id, $p['name'], (int)$prts[$id], $price);
+		}
+
+		$whole = floor($total);
+		$decimal = $total - $whole;
+		$roundoff = 0;
+		if($decimal != 0){
+			if($decimal >= 0.5){
+				$roundoff = 1 - $decimal;
+			}else{
+				$roundoff = -$decimal;
+			}
+			$products[] = $this->getProductArray(0, 'Sales Roundoff account', 1, $roundoff);
+			$total += $roundoff;
 		}
 
 		if($fast_del){
